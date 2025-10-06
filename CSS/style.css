@@ -1,0 +1,217 @@
+:root {
+    --primary-green: #026E6B; /* Verde principal para botões e destaque */
+    --light-green-bg: #00b48d91; /* Verde claro para o fundo da sidebar */
+    --dark-text: #212529; /* Cor padrão para textos escuros */
+    --white-text: #ffffff; /* Cor branca para textos */
+    --tob-gradient: linear-gradient(to bottom, #069E9E,#016D6B);
+    --green-text:#06A0A0;
+}
+/* Efeito de hover para os cards de configuração */
+.custom-card-hover {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    border: 1px solid #eee;
+}
+
+.custom-card-hover:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Estilos para a tela de carregamento */
+#loader-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
+}
+
+.loader-hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+body {
+    overflow-x: hidden;
+    background-color: #f8f9fa; /* Cor de fundo suave */
+}
+
+#wrapper {
+    display: flex;
+}
+
+#sidebar-wrapper {
+    /* Para mobile, a sidebar é um overlay que desliza da esquerda */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 15rem;
+    height: 100%;
+    z-index: 1031; /* Acima da navbar (que tem z-index ~1020) */
+    background: var(--tob-gradient); /* Cor do sidebar */
+    color: var(--dark-text); /* Cor do texto no sidebar */
+    transform: translateX(-100%);
+    transition: transform 0.25s ease-out;
+}
+
+#sidebar-wrapper .sidebar-heading {
+    padding: 0.875rem 1.25rem;
+    font-size: 1.2rem;
+    color: var(--white-text); /* Cor do texto do título do sidebar */
+    white-space: nowrap; /* Garante que o texto não quebre */
+    overflow: hidden; /* Esconde o excesso */
+}
+
+/* Esconde o ícone por padrão (visível apenas quando recolhido) */
+#sidebar-wrapper .sidebar-heading .short-icon {
+    display: none;
+    font-size: 1.8rem; /* Tamanho maior para o ícone */
+}
+
+#sidebar-wrapper .list-group {
+}
+
+#page-content-wrapper {
+    width: 100%; /* Ocupa todo o espaço disponível */
+    display: flex; /* Para o rodapé ficar no final */
+    flex-direction: column; /* Para o rodapé ficar no final */
+}
+
+#wrapper.toggled #sidebar-wrapper {
+    transform: translateX(0); /* Mostra a sidebar */
+}
+
+/* Estilo para quando a sidebar estiver recolhida (apenas ícones) */
+#wrapper.toggled #sidebar-wrapper .sidebar-heading .full-text {
+    display: none; /* Esconde o texto completo */
+}
+#wrapper.toggled #sidebar-wrapper .sidebar-heading .short-icon {
+    display: inline-block; /* Mostra o ícone */
+    width: 100%; /* O ícone ocupa a largura total do heading reduzido */
+    text-align: center; /* Centraliza o ícone */
+}
+
+#wrapper.toggled #sidebar-wrapper {
+    width: 3.5rem; /* Largura para os ícones */
+}
+#wrapper.toggled #sidebar-wrapper .list-group-item .nav-text {
+    display: none; /* Esconde o texto dos itens do menu */
+}
+#wrapper.toggled #sidebar-wrapper .list-group-item {
+    text-align: center;
+    padding-left: 0.5rem !important; /* Ajusta o padding para ícones */
+    padding-right: 0.5rem !important;
+}
+#wrapper.toggled #sidebar-wrapper .list-group-item i {
+    margin-right: 0 !important; /* Remove margem do ícone */
+}
+
+
+@media (min-width: 768px) {
+    #sidebar-wrapper {
+        /* No desktop, a sidebar volta a ser parte do layout */
+        position: sticky;
+        transform: none;
+        transition: width .25s ease-out; /* Apenas a largura transiciona */
+        width: 15rem;
+
+        /* --- Estilos para fixar a sidebar no desktop --- */
+        position: -webkit-sticky; /* Compatibilidade com Safari */
+        position: sticky;
+        top: 0;
+        z-index: auto; /* Reseta o z-index do mobile */
+        height: 100vh; /* Garante que a sidebar ocupe a altura toda da tela */
+        overflow-y: auto; /* Adiciona rolagem interna se os itens não couberem */
+    }
+
+    /* --- Estilos para fixar a navbar no desktop --- */
+    #page-content-wrapper .navbar {
+        position: -webkit-sticky; /* Compatibilidade com Safari */
+        position: sticky;
+        top: 0;
+        /* z-index garante que a navbar fique sobre o conteúdo ao rolar */
+        z-index: 1020; 
+    }
+
+    #page-content-wrapper {
+        min-width: 0;
+        width: 100%;
+    }
+
+    #wrapper.toggled #sidebar-wrapper {
+        width: 3.5rem;
+    }
+
+    /* Estilo para quando a sidebar estiver recolhida em telas grandes */
+    #wrapper.toggled #sidebar-wrapper .sidebar-heading .full-text {
+        display: none; /* Esconde o texto completo */
+    }
+    #wrapper.toggled #sidebar-wrapper .sidebar-heading .short-icon {
+        display: inline-block; /* Mostra o ícone */
+        width: 100%;
+        text-align: center;
+    }
+
+    #wrapper.toggled #sidebar-wrapper .list-group-item .nav-text {
+        display: none; /* Esconde o texto dos itens do menu */
+    }
+    #wrapper.toggled #sidebar-wrapper .list-group-item {
+        padding: 0.75rem 0.5rem; /* Padding para ícones */
+    }
+    #wrapper.toggled #sidebar-wrapper .list-group-item i {
+        margin-right: 0;
+    }
+}
+
+/* Cores dos itens da sidebar */
+.list-group-item {
+    background-color: var(--primary-green); /* Fundo do item */
+    color: var(--white-text) !important; /* Texto do item */
+    border: none;
+    transition: background-color 0.2s ease; /* Transição suave para hover */
+}
+
+.list-group-item:hover {
+    background-color: #069E9E !important; /* Fundo do item ao passar o mouse (um pouco mais claro que o primary-green) */
+}
+
+.list-group-item.active {
+    background-color: var(--white-text) !important; /* Fundo do item ativo */
+    color: var(--green-text) !important; /* Texto verde para item ativo */
+    font-weight: bold;
+}
+
+/* Cor do botão de toggle da sidebar (na navbar) */
+#sidebarToggle {
+    background-color: var(--primary-green);
+    border-color: var(--primary-green);
+    color: var(--white-text);
+}
+#sidebarToggle:hover {
+    background-color: #069E9E; /* Um pouco mais escuro no hover */
+    border-color: #069E9E;
+}
+
+/* Estilos para o rodapé */
+footer {
+    width: 100%;
+    background-color: var(--primary-green); /* Ou um cinza claro, dependendo do design final */
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    color: var(--white-text);
+}
+.btn{
+    color: white;
+    background-color: var(--primary-green);
+}.btn:hover{
+    background-color: var(--green-text);
+}.btn:active{
+    color: white;
+    background-color: var(--primary-green);
+}

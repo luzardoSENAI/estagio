@@ -1,0 +1,26 @@
+<div class="container-fluid p-4 flex-grow-1">
+    <h1 class="mt-4">Avaliações</h1>
+    <p>Veja as avaliações de desempenho de cada estagiário com base em seus registros.</p>
+
+    <div class="d-flex justify-content-end mb-4">
+        <div class="col-md-4 col-lg-3">
+            <select id="sortAvaliacoes" class="form-select">
+                <option value="default" selected>Ordenar por...</option>
+                <option value="nome-asc">Nome (A-Z)</option>
+                <option value="nome-desc">Nome (Z-A)</option>
+                <option value="media-desc">Maior Média</option>
+                <option value="media-asc">Menor Média</option>
+            </select>
+        </div>
+    </div>
+
+    <div id="avaliacoes-container">
+        <!-- O conteúdo das avaliações será inserido aqui pelo JavaScript -->
+        <div class="text-center">
+            <div class="spinner-border text-success" role="status">
+                <span class="visually-hidden">Carregando...</span>
+            </div>
+            <p>Carregando avaliações...</p>
+        </div>
+    </div>
+</div>

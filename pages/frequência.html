@@ -1,0 +1,131 @@
+<div class="container-fluid p-4 flex-grow-1">
+    <h1 class="mt-4">Frequência dos Estagiários</h1>
+    <p>Filtre e acompanhe os registros de ponto, status e frequência geral.</p>
+
+    <!-- Filtros -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <div class="row g-3 align-items-end">
+                <div class="col-lg-3 col-md-6">
+                    <label for="estagiarioSelect" class="form-label">Estagiário:</label>
+                    <select class="form-select" id="estagiarioSelect">
+                        <option value="all" selected>Todos os Estagiários</option>
+                        <!-- Opções de estagiários serão inseridas aqui pelo JavaScript -->
+                    </select>
+                </div>
+                <div class="col-lg-2 col-md-6">
+                    <label for="dataInicio" class="form-label">Data Início:</label>
+                    <input type="date" class="form-control" id="dataInicio" value="2025-01-01">
+                </div>
+                <div class="col-lg-2 col-md-6">
+                    <label for="dataFim" class="form-label">Data Fim:</label>
+                    <input type="date" class="form-control" id="dataFim" value="2025-12-31">
+                </div>
+                <div class="col-lg-2 col-md-6">
+                    <label for="statusSelect" class="form-label">Status:</label>
+                    <select class="form-select" id="statusSelect">
+                        <option value="all" selected>Todos</option>
+                        <option>Presente</option>
+                        <option>Faltou</option>
+                        <option>Atraso</option>
+                    </select>
+                </div>
+                <div class="col-lg-3 col-md-12 text-lg-end">
+                    <button class="btn btn-success me-2" id="filterBtn"><i class="fas fa-filter me-1"></i>
+                        Filtrar</button>
+                    <button class="btn btn-outline-success"><i class="fas fa-file-export me-1"></i> Exportar
+                        PDF</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cards de Resumo -->
+    <div class="row mb-4">
+        <div class="col-lg-4 mb-4">
+            <div class="card h-100 shadow-sm p-3" id="summary-card-status-bg"
+                style="background-color: #e6ffe6; border-left: 5px solid var(--primary-green);">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-circle fa-2x text-success me-3" id="summary-card-status-icon"></i>
+                    <div>
+                        <h6 class="mb-0 text-muted">Status do Estagiário</h6>
+                        <p class="mb-0 fw-bold fs-5" id="summary-card-status-text">Carregando...</p>
+                        <small class="text-muted" id="summary-card-last-entry">Carregando...</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body d-flex align-items-center">
+                    <i class="fas fa-clock fa-2x text-info me-3"></i>
+                    <div>
+                        <h6 class="mb-1 text-muted">Horas no Mês</h6>
+                        <span class="fs-5 fw-bold">40h / 70h</span>
+                        <div class="progress mt-2" style="height: 8px;">
+                            <div class="progress-bar bg-info" role="progressbar" style="width: 65%;" aria-valuenow="6"
+                                aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body d-flex align-items-center">
+                    <i class="fas fa-calendar-check fa-2x text-warning me-3"></i>
+                    <div>
+                        <h6 class="mb-1 text-muted" id="frequency-card-title-2">Frequência (Mês)</h6>
+                        <span class="fs-5 fw-bold" id="frequency-card-percentage-2">--%</span>
+                        <p class="small text-muted mb-0" id="frequency-card-absences-2">Calculando...</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal para Detalhes do Estagiário -->
+    <div class="modal fade" id="entityDetailsModal" tabindex="-1" aria-labelledby="entityDetailsModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="entityDetailsModalLabel">Detalhes do Estagiário</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="entityDetailsModalBody">
+                    <!-- Os detalhes do estagiário serão inseridos aqui via JavaScript -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabela de Atividades -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+            <div>
+                <h5 class="mb-0">Atividade Geral</h5>
+                <p class="text-muted small mb-0">Registro de Presença e Faltas</p>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th class="ps-3">Nome do Estagiário</th>
+                            <th>Status</th>
+                            <th id="registro-header">Último Registro</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="frequencia-tbody">
+                        <!-- As linhas da tabela serão inseridas aqui pelo JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
