@@ -1,0 +1,45 @@
+:root {
+    --primary-green: #026E6B;
+    /* Verde principal */
+    --light-green-bg: #47aca8;
+    /* Verde claro */
+    --dark-text: #003533;
+    /* Textos escuros */
+    --white-text: #ffffff;
+    /* Textos brancos */
+    --tob-gradient: linear-gradient(to bottom, #069E9E, #016D6B);
+    --green-text: #06A0A0;
+    /* Verde para hover/destaque */
+}
+
+html,
+body {
+    height: 100%;
+}
+
+/* Cor de fundo personalizada para a coluna da ilustração */
+.illustration-bg {
+    background: var(--tob-gradient);
+    /* Tom de azul similar ao da imagem */
+}
+
+/* Estilos para os ícones de login social */
+.social-login a {
+    font-size: 1.5rem;
+    color: #495057;
+    transition: color 0.2s;
+}
+
+.social-login a:hover {
+    color: var(--primary-green);
+}
+.btn{
+    background-color: var(--light-green-bg);
+    color: white;
+}
+.btn:hover{
+    background-color: var(--light-green-bg);
+    color: white;
+}
+p{
+}

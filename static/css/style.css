@@ -1,0 +1,405 @@
+:root {
+    --primary-green: #026E6B;
+    /* Verde principal */
+    --light-green-bg: #00b48d91;
+    /* Verde claro */
+    --dark-text: #003533;
+    /* Textos escuros */
+    --white-text: #ffffff;
+    /* Textos brancos */
+    --tob-gradient: linear-gradient(to bottom, #069E9E, #016D6B);
+    --green-text: #06A0A0;
+    /* Verde para hover/destaque */
+    --sidebar-width: 220px;
+    --colapsed-sidebar-width: 60px;
+    --bg: #f8f9fa;
+}
+
+/* Body */
+body {
+    background: var(--white-text);
+    font-family: 'Open Sans', sans-serif;
+    color: var(--dark-text);
+}
+
+i, h1, p, label {
+    color: var(--dark-text);
+}
+
+
+/* Botões */
+.btn {
+    background-color: var(--primary-green);
+    color: var(--white-text) !important;
+}
+
+.btn:hover {
+    background-color: var(--green-text);
+}
+
+/* Sidebar */
+nav.sidebar {
+    background: var(--tob-gradient);
+    /* gradiente vertical */
+    color: var(--white-text) !important;
+    width: 220px;
+    display: flex;
+    flex-direction: column;
+    transition: width 0.3s ease;
+    min-height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 100;
+}
+
+nav.sidebar.collapsed {
+    width: var(--colapsed-sidebar-width);
+    background-color: var(--light-green-bg);
+}
+
+nav.sidebar.collapsed {
+    span{
+        display: none;
+    }
+}
+
+/* Logo */
+.sidebar-logo {
+    text-align: center;
+    padding: 20px 10px;
+    /* altura menor */
+    position: relative;
+}
+
+.sidebar-logo img {
+    max-width: 120px;
+    transition: all 0.3s ease;
+}
+
+.logo-mini {
+    display: none;
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    margin: auto;
+}
+
+nav.sidebar.collapsed .logo-expanded {
+    display: none;
+}
+
+nav.sidebar.collapsed .logo-mini {
+    display: block;
+}
+
+/* Toggle button */
+.toggle-btn {
+    background-color: var(--primary-green);
+    padding: 1vh 1.5vh;
+    border-radius: 1vh;
+    cursor: pointer;
+    left: 15px;
+
+    i {
+        color: white;
+    }
+}
+
+/* Menu */
+nav.sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    margin-top: 20px;
+    flex-grow: 1;
+}
+
+form {
+    width: 100%;
+}
+
+.form {
+    width: 60%;
+}
+
+nav.sidebar ul li a {
+    color: var(--white-text);
+    text-decoration: none;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 10px;
+    transition: all 0.3s ease;
+    height: 60px;
+    box-sizing: border-box;
+    overflow: hidden;
+    width: 100%;
+
+}
+
+nav.sidebar.collapsed ul li a {
+    justify-content: center;
+    padding: 10px 0;
+}
+
+nav.sidebar ul li a i {
+    color: white;
+    margin-right: 10px;
+    min-width: 40px;
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+}
+
+
+.active {
+    i {
+
+        color: var(--green-text) !important;
+    }
+}
+
+/* Hover e ativo */
+nav.sidebar ul li a.active,
+nav.sidebar ul li a:hover {
+    background-color: var(--white-text);
+    width: 100%;
+    color: var(--green-text) !important;
+    font-weight: bold;
+
+    i {
+        color: var(--green-text) !important;
+    }
+}
+
+nav.sidebar.collapsed ul li a:hover {
+    background-color: var(--white-text);
+    color: var(--primary-green);
+}
+
+/* Conteúdo principal */
+.main-wrapper {
+    width: calc(100% - var(--sidebar-width));
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin-left: 220px;
+    /* sidebar expandida */
+    transition: margin-left 0.3s ease, width 0.3s ease;
+
+    header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+}
+
+/* Ajuste do header quando sidebar recolhida */
+nav.sidebar.collapsed~.main-wrapper {
+    margin-left: var(--colapsed-sidebar-width);
+    width: calc(100% - var(--colapsed-sidebar-width));
+}
+
+nav.sidebar.collapsed~.main-wrapper header {
+    left: 60px;
+    /* Garante que o header se alinhe com a sidebar recolhida */
+    width: calc(100% - 60px);
+}
+
+/* Main e padding */
+main {
+    flex: 1;
+    /* Faz esta área crescer para empurrar o footer para baixo */
+    padding: 85px 20px 20px 20px;
+    /* Aumentei o padding superior para dar mais espaço para o header */
+    overflow-y: auto;
+    display: flex;
+}
+
+/* Header */
+
+
+header {
+    /* --- POSICIONAMENTO E DIMENSIONAMENTO --- */
+    position: fixed;
+    /* Essencial para a animação não depender do wrapper */
+    top: 0;
+    left: 220px;
+    /* Posição inicial, igual à largura da sidebar ABERTA */
+    width: calc(100% - 220px);
+    /* Largura inicial */
+    height: 60px;
+    /* Defina uma altura fixa para consistência */
+    z-index: 999;
+    /* Garante que o header fique acima do conteúdo principal */
+
+    /* --- ANIMAÇÃO SUAVE --- */
+    /* Anima o 'left' e 'width' com a mesma duração da sidebar */
+    transition: left 0.3s ease, width 0.3s ease;
+
+    /* --- ESTILOS VISUAIS (seus estilos existentes) --- */
+    background-color: var(--white-text);
+    color: var(--dark-text);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+
+    /* --- ALINHAMENTO INTERNO (para título e foto) --- */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30px;
+    /* Espaçamento nas laterais */
+
+
+    header h1 {
+        margin: 0;
+        font-size: 1.5rem;
+        /* Tamanho de fonte mais consistente */
+        flex-grow: 1;
+        /* Permite que o título ocupe o espaço vazio */
+        text-align: center;
+        /* Mantém o título centralizado no espaço dele */
+    }
+
+    /* Footer */
+    /* Footer fixo no fim */
+    footer {
+        width: calc(100% - var(--sidebar-width));
+        height: 50px;
+        width: 100%;
+        background-color: var(--white-text);
+        color: var(--primary-green);
+        line-height: 50px;
+        flex-shrink: 0;
+        outline: solid 1px #21252923;
+
+        p {
+            text-align: center;
+        }
+    }
+
+    .btn-primary-system {
+        background-color: #026E6B;
+        /* cor principal do sistema */
+        color: white;
+        border: none;
+        transition: background-color 0.3s;
+    }
+
+    .btn-primary-system:hover {
+        background-color: #014F4D;
+        /* tom mais escuro ao passar o mouse */
+    }
+
+    body.no-sidebar .main-wrapper {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    body.no-sidebar header {
+        left: 0;
+        width: 100%;
+        justify-content: center;
+        /* Centraliza o título quando não há foto de perfil */
+    }
+
+    body.no-sidebar .profile-pic-container {
+        display: none;
+
+    }
+
+    
+
+    .profile-pic:hover {
+        transform: scale(1.1);
+        /* Efeito de zoom */
+    }
+
+    .profile-pic-container {
+        flex-shrink: 0;
+        /* Impede que a foto seja "espremida" */
+    }
+}
+.profile-pic {
+        right: 0;
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        /* <-- ISSO DEIXA A IMAGEM REDONDA */
+        object-fit: cover;
+        /* Garante que a imagem preencha o círculo sem distorcer */
+        border: 2px solid var(--primary-green);
+        /* Borda na cor principal */
+        cursor: pointer;
+        transition: transform 0.2s;
+    }
+.card-container {
+    display: flex;
+    align-items: c;
+    flex-direction: row;
+}
+
+/* MODAL */
+/* Fundo do modal */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6); /* efeito escuro */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    animation: fadeIn 0.3s ease;
+}
+
+/* Conteúdo do modal */
+.modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.2);
+    position: relative;
+    animation: slideUp 0.3s ease;
+}
+
+/* Botão fechar */
+.modal-close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #555;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.modal-close:hover {
+    color: #ff4d4d;
+}
+
+/* Corpo do modal */
+.modal-body {
+    margin-top: 10px;
+}
+
+/* Animações */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}

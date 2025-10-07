@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}avaliacoes{% endblock %}
+{% load static %}
+{% block header %}{% endblock %}
+
+{% block content %}
+<div class="w-100 p-4">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h1 class="">Avaliações</h1>
+            <h5>Acompanhe e gerencie as avaliações.</p>
+        </div>
+        <select id="sortAvaliacoes" class="form-select w-25">
+            <option value="default" selected>Ordenar por...</option>
+            <option value="nome-asc">Nome (A-Z)</option>
+            <option value="nome-desc">Nome (Z-A)</option>
+            <option value="media-desc">Maior Média</option>
+            <option value="media-asc">Menor Média</option>
+        </select>
+    </div>
+
+
+    <div id="avaliacoes-container">
+        <!-- O conteúdo das avaliações será inserido aqui pelo JavaScript -->
+        <div class="col">
+            <div class="card h-100 shadow-sm custom-card-hover">
+                <div class="card-body p-4">
+                    <div class="row g-0">
+                        <div
+                            class="col-md-4 text-center d-flex flex-column justify-content-center align-items-center border-md-end pe-md-4 mb-3 mb-md-0">
+                            <i class="fas fa-user-graduate fa-3x text-primary mb-3"></i>
+                            <h5 class="card-title mb-1">Nome</h5>
+                            <p class="text-muted small">ID</p>
+                            <div class="mt-3">
+                                <h4 class="fw-bold ${ratingColorClass}" style="font-size: 2.8rem; line-height: 1;">
+                                    Rating</h4>
+                                <small class="text-muted text-uppercase" style="font-size: 0.7rem;">Média Geral</small>
+                            </div>
+                        </div>
+                        <div class="col-md-8 d-flex flex-column justify-content-center ps-md-4">
+                            <div class="d-flex justify-content-between align-items-center mb-3"><span
+                                    class="text-muted">Frequência</span>
+                                <div class="d-inline-block" style="min-width: 100px;">(...)</div>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mb-3"><span
+                                    class="text-muted">Assiduidade</span>
+                                <div class="d-inline-block" style="min-width: 100px;">(...)</div>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center"><span
+                                    class="text-muted">Qualidade (Sim.)</span>
+                                <div class="d-inline-block" style="min-width: 100px;">(...)</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
