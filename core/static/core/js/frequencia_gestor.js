@@ -1,5 +1,6 @@
 import { BASE_URL, ApiData } from "/static/js/api.js";
 import { csrf_token, formatarDataBrasileira , capitalizarString } from "/static/js/main.js";
+
 let tabela = []
 let tipo;
 
