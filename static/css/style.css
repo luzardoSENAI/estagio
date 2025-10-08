@@ -80,7 +80,7 @@ nav.sidebar.collapsed {
 
 .logo-mini {
     display: none;
-    width: 40px;
+    width: 35px;
     height: 40px;
     object-fit: contain;
     margin: auto;
@@ -147,7 +147,6 @@ nav.sidebar.collapsed ul li a {
 
 nav.sidebar ul li a i {
     color: white;
-    margin-right: 10px;
     min-width: 40px;
     min-height: 40px;
     display: flex;
