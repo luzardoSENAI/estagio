@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 {% block title %}perfil{% endblock %}
 {% load static %}
+{% block app_js %}
+<script type="module" src="{% static 'core/js/perfil_gestor.js' %}"></script>
+{% endblock %}
 {% block header %}{% endblock %}
 
 {% block content %}
@@ -15,8 +18,7 @@
                             <div class="col-md-4 text-center mb-4 mb-md-0">
                                 <div class="profile-pic-wrapper">
                                     <label for="profilePicInput" class="cursor-pointer">
-                                        <img id="profilePic" class="profile-pic"
-                                            src="{{ request.user.usuario.foto_perfil }}" alt="{{imagem_perfil}}">
+                                        <img id="imgcontainer" class="profile-pic2" src="{{ request.user.usuario.foto_perfil }}" alt="{{imagem_perfil}}">
                                         <div class="upload-button">
                                             <i class="bi bi-camera"></i>
                                         </div>
@@ -33,31 +35,9 @@
                                             name="nome" value="{{nome}}">
                                     </div>
                                     <div class="col-sm-6 mb-3">
-                                        <label for="lastName" class="form-label">User da sua Loja</label>
+                                        <label for="lastName" class="form-label">Usuário</label>
                                         <input type="text" name="usuario" class="form-control" id="lastName"
-                                            value="{{usuario}}" placeholder="@exemplo">
-                                    </div>
-                                </div>
-                                <div class="">
-                                    <label for="email" class="form-label">Endereço</label>
-                                    <input type="text" class="form-control" id="endereço" value="" size="10"
-                                        maxlength="9" onblur="" /></label><br />
-                                </div>
-                                <div class="row">
-                                    <div class="col-sm-6 mb-3">
-                                        <label for="lastName" class="form-label">CEP</label>
-                                        <input name="cep" type="text" class="form-control" id="cep" value="{{cep}}"
-                                            size="10" name="cep" maxlength="9"
-                                            onblur="pesquisacep(this.value);" /></label><br />
-                                    </div>
-                                    <div class="col-sm-6 ">
-                                        <label for="firstName" class="form-label">Número</label>
-                                        <div class="input-group">
-                                            <div class="input-group-text" id="btnGroupAddon">Nº</div>
-                                            <input value="{{numero_localizacao}}" type="text" class="form-control"
-                                                placeholder="Ex: 497" name="numero_localizacao"
-                                                aria-label="Input group example" aria-describedby="btnGroupAddon">
-                                        </div>
+                                            value="{{usuario}}" placeholder="exemplo">
                                     </div>
                                 </div>
                                 <div class="mb-3">
@@ -65,17 +45,6 @@
                                     <input name="email" type="email" class="form-control" id="email"
                                         placeholder="seu@email.com" value="{{email}}">
                                 </div>
-                                <div class="mb-3">
-                                    <label for="phone" class="form-label">Whatsapp da Loja</label>
-                                    <input type="tel" class="form-control" id="phone" placeholder="(00) 00000-0000"
-                                        value="{{whatsapp}}">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="bio" class="form-label">Biografia</label>
-                                    <textarea class="form-control" id="bio" rows="3" name="biografia"
-                                        placeholder="Fale um pouco sobre a loja...">{{biografia}}</textarea>
-                                </div>
-
                             </div>
                         </div>
                         <div class="text-end mt-4">
