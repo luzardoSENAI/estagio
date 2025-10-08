@@ -1,11 +1,18 @@
-
 {% extends "base.html" %}
 {% block title %}dispositivo{% endblock %}
 {% load static %}
 {% block header %}{% endblock %}
+{% block app_js %}
+<script type="module" src="{% static 'core/js/dispositivo_gestor.js' %}"></script>
+{% endblock %}
 
 {% block content %}
-<div class="p-4">
-    <h1>dispositivo</h1>
+<div class="p-4 w-100">
+    <h1>Dispositivos</h1>
+    <div class="row" id="dispositivos-container">
+        <!-- Cards de demanda serão inseridos aqui dinamicamente -->
+
+        
+    </div>
 </div>
 {% endblock %}

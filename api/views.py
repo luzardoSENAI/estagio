@@ -1,7 +1,9 @@
 from django.shortcuts import render, redirect
 from django.http import JsonResponse, HttpResponse
 from usuarios.models import Usuario, Registro
-from instituicoes.models import Dispositvo, Turma
+from instituicoes.models import Dispositvo, Turma, Instituicao
+from django.utils import timezone
+from django.utils.dateparse import parse_datetime
 from datetime import datetime, time, date, timedelta
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q, F, Value, CharField, Case, When
@@ -70,11 +72,27 @@ def registrar_frequencia(request):
                 justificado=justificado,
                 turma = turma
             )
+            dispositivo.ultimo_registro = timezone.now()
+            dispositivo.save()
         else:
             status = "Hoje não é dia de aula"
 
         return JsonResponse({"mensagem": f"{status}"})
     
+    return JsonResponse({"error": "Método não permitido"}, status=405)
+
+@csrf_exempt
+def ping_dispositivo(request):
+    if request.method == "POST":
+        try:
+            body = json.loads(request.body)
+            uuid = body.get("uuid")
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "JSON inválido"}, status=400)
+        dispositivo = Dispositvo.objects.get(uuid=uuid)
+        dispositivo.ultimo_ping = timezone.now()
+        dispositivo.save()
+        return JsonResponse({'agora':timezone.now()})
     return JsonResponse({"error": "Método não permitido"}, status=405)
 
 @login_required
@@ -142,6 +160,26 @@ def frequencia_gestor(request):
 @csrf_exempt
 def demandas_gestor(request):
     return JsonResponse({'demandas':'demandas'})
+
+def dispositivos(request):
+    usuario = request.user.usuario
+
+    # Filtra as instituições onde o gestor é o usuário atual
+    instituicao_qs = Instituicao.objects.filter(instituicao__gestor=usuario)
+
+    # Busca todos os dispositivos dessas instituições
+    dispositivos_qs = Dispositvo.objects.filter(instituicao__in=instituicao_qs)
+    dispositivos = [
+    {
+        "id": d.uuid,
+        "instituicao": d.instituicao.nome,
+        'status':d.online,
+        'utlimo_ping':str(d.ultimo_ping),
+        'utlimo_registro':str(d.ultimo_registro)
+    }
+    for d in dispositivos_qs
+    ]
+    return JsonResponse(dispositivos, safe=False)
 
 # GERAR PDF
 from reportlab.lib.pagesizes import A4

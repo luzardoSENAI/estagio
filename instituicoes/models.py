@@ -1,6 +1,7 @@
 from django.db import models
 from multiselectfield import MultiSelectField
 from datetime import date
+from django.utils import timezone
 import uuid
 
 class Instituicao(models.Model):
@@ -38,13 +39,14 @@ class Turma(models.Model):
     instituicao = models.ForeignKey(
         Instituicao,
         on_delete=models.CASCADE,
-        related_name='turmas',
+        related_name='instituicao',
         blank=True,
         null=True
     )
     gestor = models.ForeignKey(
         "usuarios.Usuario",
         on_delete=models.CASCADE,
+        related_name='turmas',
         null=True,
         blank=True,
         limit_choices_to={'cargo':'gestor'}
@@ -81,3 +83,11 @@ class Dispositvo(models.Model):
     )
     def __str__(self):
         return f'Instituição: {self.instituicao.nome}'
+    ultimo_ping = models.DateTimeField(null=True, blank=True)
+    ultimo_registro = models.DateTimeField(null=True, blank=True)
+    @property
+    def online(self):
+        if not self.ultimo_ping:
+            return False
+        delta = timezone.now() - self.ultimo_ping
+        return delta.total_seconds() < 60 
