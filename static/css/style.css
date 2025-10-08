@@ -140,7 +140,6 @@ nav.sidebar ul li a {
     box-sizing: border-box;
     overflow: hidden;
     width: 100%;
-
 }
 
 nav.sidebar.collapsed ul li a {
@@ -167,18 +166,19 @@ nav.sidebar ul li a i {
 }
 
 /* Hover e ativo */
-nav.sidebar ul li a.active,
-nav.sidebar ul li a:hover {
-    background-color: var(--white-text);
+nav.sidebar ul li a.active{
+    background-color: white;
     width: 100%;
     color: var(--green-text) !important;
     font-weight: bold;
-
     i {
         color: var(--green-text) !important;
     }
 }
-
+nav.sidebar ul li a:not(.active):hover{
+    background-color: rgba(255, 255, 255, 0.486);
+    width: 100%;
+}
 nav.sidebar.collapsed ul li a:hover {
     background-color: var(--white-text);
     color: var(--primary-green);

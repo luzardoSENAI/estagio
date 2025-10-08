@@ -32,12 +32,12 @@
                                     <div class="col-sm-6 mb-3">
                                         <label for="firstName" class="form-label">Nome</label>
                                         <input type="text" class="form-control" id="firstName" placeholder="Seu nome"
-                                            name="nome" value="{{nome}}">
+                                            name="nome" value="{{request.user.usuario.nome}}">
                                     </div>
                                     <div class="col-sm-6 mb-3">
                                         <label for="lastName" class="form-label">Usuário</label>
                                         <input type="text" name="usuario" class="form-control" id="lastName"
-                                            value="{{usuario}}" placeholder="exemplo">
+                                            value="{{request.user}}" placeholder="exemplo">
                                     </div>
                                 </div>
                                 <div class="mb-3">

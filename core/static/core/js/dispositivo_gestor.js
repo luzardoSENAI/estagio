@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     dados.forEach(d => {
         container.innerHTML += `
         
-        <div class="col-lg-2 col-xl-3 mb-4">
+        <div class="w-25">
             <div class="card h-100 shadow-sm custom-card-hover" data-demanda-index="">
                 <div class="card-header  border-2 border-bottom-0 d-flex justify-content-between align-items-center">
                     <h5 class="card-title mb-0 text-dark">${d.instituicao}</h5>
