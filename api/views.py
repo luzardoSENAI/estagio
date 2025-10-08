@@ -43,9 +43,6 @@ def registrar_frequencia(request):
         agora = time(13, 00, 00)
 
         # agora = datetime.now().time().replace(microsecond=0)
-
-
-
         entrada_dt = datetime.combine(hoje, hora_entrada)
         saida_dt = datetime.combine(hoje, hora_saida)
         agora_dt = datetime.combine(date.today(), agora)

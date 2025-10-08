@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <div class="card-body  border-2 border-bottom-0 d-flex flex-column justify-content-between align-items-start">
                     <h5>Último registro:</h5>
                     <h7>${d.utlimo_registro.includes('None') ? '--' : isoToBR(d.utlimo_registro)}</h7>
-                    <h5>Último sinal:</h5>
+                    <h5>Última conexão:</h5>
                     <h7>${d.utlimo_ping.includes('None') ? '--' : isoToBR(d.utlimo_ping)}</h7>
                     <h5>id:</h5>
                     <h9>${d.id}</h9>
