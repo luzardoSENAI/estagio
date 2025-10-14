@@ -1,4 +1,4 @@
-![Texto Alternativo]([URL_da_Imagem](https://raw.githubusercontent.com/luzardoSENAI/estagio/refs/heads/estagio-rc/static/logo.png))
+![Texto Alternativo](https://raw.githubusercontent.com/luzardoSENAI/estagio/refs/heads/estagio-rc/static/logo.png)
 
 **Sistema de gerenciamento de estágios com geração automática de relatórios integrada e endpoint dedicado para registrar frequência de estagiários no sistema via dispositivo remoto.**
 
