@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from django.db import models
 from django.dispatch import receiver
+from datetime import datetime
 import uuid
 from django.db.models.signals import post_save
 
@@ -18,9 +19,16 @@ class Usuario(models.Model):
     data_nascimento = models.DateField(blank=True, null=True)
     telefone = models.CharField(max_length=20, blank=True, null=True)
     endereco = models.TextField(blank=True, null=True)
-    
     image = models.ImageField(default='profile_pics/default.png', upload_to='profile_pics')
-    
+    email = models.EmailField(blank=True, null=True)
+
+    matricula = models.CharField(
+        max_length=50,
+        unique=True,
+        blank=True,
+        null=True
+    )
+
     @property
     def foto_perfil(self):
         if self.image:
@@ -53,13 +61,12 @@ class Usuario(models.Model):
 @receiver(post_save, sender=User)
 def create_profile(sender, instance, created, **kwargs):
     if created:
-        Usuario.objects.create(user=instance)
-
-@receiver(post_save, sender=User)
-def save_profile(sender, instance, **kwargs):
-    instance.usuario.save()
-    
-
+        usuario = Usuario.objects.create(user=instance)
+        ano_atual = datetime.now().year
+        id_formatado = f"{usuario.id:05d}"
+        matricula_gerada = f"{ano_atual}{id_formatado}"
+        usuario.matricula = matricula_gerada
+        usuario.save()
 
 class Registro(models.Model):
     estagiario = models.ForeignKey(Usuario, on_delete=models.CASCADE,limit_choices_to={'cargo': 'estagiario'})

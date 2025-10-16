@@ -49,16 +49,15 @@
           href="{% url 'dispositivo' %}"><i class="bi bi-hdd-fill"></i> <span>Dispositivo</span></a>
       </li>
       <li datapage=""><a class="{% if request.resolver_match.url_name == 'cadastrar_estagiario' %}active{% endif %}"
-          href="{% url 'cadastrar_estagiario' %}"><i class="bi bi-person-fill-add"></i> <span>Cadastrar
-            Estagiário</span></a>
+          href="{% url 'cadastrar_estagiario' %}"><i class="bi bi-person-fill-gear"></i> <span>Gerenciar Estagiários</span></a>
       </li>
 
+      
+      <li datapage=""><a class="{% if request.resolver_match.url_name == 'gerenciar' %}active{% endif %}"
+        href="{% url 'gerenciar' %}"><i class="bi bi-gear-fill"></i> <span>Gerenciar</span></a>
+      </li>
       <li datapage=""><a class="{% if request.resolver_match.url_name == 'perfil' %}active{% endif %}"
           href="{% url 'perfil' %}"><i class="bi bi-person-circle"></i><span>Meu Perfil</span></a></li>
-
-      <li datapage=""><a class="{% if request.resolver_match.url_name == 'gerenciar' %}active{% endif %}"
-          href="{% url 'gerenciar' %}"><i class="bi bi-gear-fill"></i> <span>Gerenciar</span></a>
-      </li>
       <li datapage=""><a href="{% url 'logout' %}"><i class="bi bi-box-arrow-right"></i> <span>Sair</span></a></li>
     </ul>
 

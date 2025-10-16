@@ -90,3 +90,5 @@ def gerenciar(request):
         return redirect('error_404')
     return render(request,template)
 
+def home(request):
+    return render(request, 'home.html')

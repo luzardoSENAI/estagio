@@ -1,11 +1,29 @@
-
 {% extends "base.html" %}
-{% block title %}cadastrar_estagiario{% endblock %}
+{% block title %}Cadastrar Estagiário{% endblock %}
 {% load static %}
 {% block header %}{% endblock %}
 
+{% block app_js %}
+<script type="module" src="{% static 'core/js/cadastrar_estagiario.js' %}"></script>
+{% endblock %}
+
 {% block content %}
-<div class="p-4">
-    <h1>cadastrar_estagiario </h1>
+
+<div class="w-100 p-4">
+    <!-- Cabeçalho da Página -->
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h1 class="">Gerenciar Estágiarios</h1>
+            <h5>Acompanhe e gerencie os estagiários cadastrados nas suas turmas.</p>
+        </div>
+        <button class="btn btn-success btn-lg" data-bs-toggle="modal" data-bs-target="#novaDemandaModal">
+            <i class="bi bi-person-fill-add" style="color: white;"></i> Cadastrar Estagiário
+        </button>
+    </div>
+    <div id="tabelas-container">
+        
+    </div>
+
 </div>
+
 {% endblock %}

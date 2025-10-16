@@ -14,17 +14,26 @@ def api(request):
     return JsonResponse({'RESPONSE':200})
 
 @csrf_exempt
-def registrar_frequencia(request):
+def registrar_frequencia(request,turma):
     if request.method == "POST":
         try:
             body = json.loads(request.body)
+            d_uuid = body.get('d_uuid')
+            
+            data = body.get('data')
+
             uuid = body.get("uuid")
-            dispositivo = body.get('dispositivo_id')
+            hora = body.get("hora")
+            data = body.get("data")
         except json.JSONDecodeError:
             return JsonResponse({"error": "JSON inválido"}, status=400)
+        turma_get = Turma.objects.get(nome=turma)
         estagiario = Usuario.objects.filter(uuid=uuid).first()
-        dispositivo = Dispositvo.objects.filter(uuid=dispositivo).first()
-        instituicao = dispositivo.instituicao
+
+        dispositivo = Dispositvo.objects.get(uuid = d_uuid)
+
+        instituicao = turma_get.instituicao
+
         if instituicao.tipo == 'escola':
             turma = estagiario.turma_escola
         elif instituicao.tipo == 'empresa':
@@ -45,11 +54,12 @@ def registrar_frequencia(request):
         agora = datetime.now().time().replace(microsecond=0)
         entrada_dt = datetime.combine(hoje, hora_entrada)
         saida_dt = datetime.combine(hoje, hora_saida)
-        agora_dt = datetime.combine(date.today(), agora)
+        data_dt = date.today()
+        agora_dt = datetime.combine(data_dt, agora)
         limite_entrada = entrada_dt + tolerancia
         limite_saida = saida_dt - tolerancia
         print(f' AGORA:{agora}, DATA ENTRADA:{entrada_dt} , SAIDA:{saida_dt}')
-        if not estagiario or not dispositivo:
+        if not estagiario:
             return JsonResponse({"error": "Estagiário não encontrado"}, status=404)
         if dia_semana in turma.dias_semana:
             if agora_dt <= limite_entrada:
@@ -141,11 +151,14 @@ def frequencia_gestor(request):
             ).values('id', 'turma_id', 'data', 'hora_registro', 'status')  # ou os campos que quiser
 
             estagiarios.append({
-                'uuid':e.uuid,
                 'nome': e.nome,
+                'email':e.email,
+                'telefone':e.telefone,
+                'uuid':e.uuid,
+                'matricula':e.matricula,
                 'foto':e.image.url,
+                'registros': list(registros_estagiario),
                 'turmas_estagiario': turmas_aluno,
-                'registros': list(registros_estagiario)
             })
 
         data = {
