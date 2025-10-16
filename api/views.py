@@ -40,9 +40,9 @@ def registrar_frequencia(request):
         hora_saida = turma.hora_saida
 
         tolerancia = timedelta(minutes=20)
-        agora = time(18, 10, 00)
-
-        # agora = datetime.now().time().replace(microsecond=0)
+        # agora = time(18, 10, 00)
+        
+        agora = datetime.now().time().replace(microsecond=0)
         entrada_dt = datetime.combine(hoje, hora_entrada)
         saida_dt = datetime.combine(hoje, hora_saida)
         agora_dt = datetime.combine(date.today(), agora)
