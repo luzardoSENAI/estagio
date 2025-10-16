@@ -141,11 +141,14 @@ def frequencia_gestor(request):
             ).values('id', 'turma_id', 'data', 'hora_registro', 'status')  # ou os campos que quiser
 
             estagiarios.append({
-                'uuid':e.uuid,
                 'nome': e.nome,
+                'email':e.email,
+                'telefone':e.telefone,
+                'uuid':e.uuid,
+                'matricula':e.matricula,
                 'foto':e.image.url,
+                'registros': list(registros_estagiario),
                 'turmas_estagiario': turmas_aluno,
-                'registros': list(registros_estagiario)
             })
 
         data = {

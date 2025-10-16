@@ -193,7 +193,7 @@ function atualizarTabela(array) {
             <td class='border'>${(r.status == 'presente' ? '<span class="badge text-bg-success">Presente</span>' : (r.status == 'falta' ? '<span class="badge text-bg-danger">Falta</span>' : (r.status == 'atrasado' ? '<span class="badge text-bg-warning">Atraso</span>' : '')))}</td>
             <td class='border'>${(r.hora_registro == null) ? (r.ultimo_registro_data == null ? '--' : `${formatarDataBrasileira(r.ultimo_registro_data)} às ${r.ultimo_registro_hora}`) : `Hoje - ${r.hora_registro}`}</td>
             <td class="info-cell border" data-nome="${r.nome}" data-img="${r.foto}">
-                <i class="bi bi-info-circle"></i>
+                <i class="bi bi-eye"></i>
             </td>
         <tr>
         `

@@ -1,0 +1,299 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EstágioS - Gerenciamento de Estágios</title>
+    <link rel="shortcut icon" href="{% static 'logo-mini.png' %}" type="image/x-icon">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        :root {
+            --primary-green: #026E6B;
+            --light-green-bg: #00b48d91;
+            --dark-text: #003533;
+            --white-text: #ffffff;
+            --tob-gradient: linear-gradient(to bottom, #57a5a4);
+            --green-text: #06A0A0;
+            --bg: #f8f9fa;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--dark-text);
+        }
+
+        .navbar {
+            background: var(--tob-gradient);
+        }
+
+        .btn-login {
+            background-color: var(--white-text);
+            color: var(--primary-green) !important;
+            font-weight: 600;
+        }
+
+        .btn-login:hover {
+            background-color: #f0f0f0;
+            color: var(--dark-text) !important;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            position: relative;
+            padding: 120px 0;
+            color: var(--white-text);
+            text-align: center;
+            background: url('https://images.unsplash.com/photo-1521737711867-e3b97375f902?q=80&w=1974&auto=format&fit=crop') no-repeat center center;
+            background-size: cover;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(2, 110, 107, 0.8);
+            /* Overlay com a cor --primary-green e 80% de opacidade */
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-section h1 {
+            font-size: 3.8rem;
+            font-weight: 700;
+            color: var(--white-text);
+        }
+
+        .hero-section p {
+            font-size: 1.3rem;
+            color: var(--white-text);
+            max-width: 700px;
+            margin: 20px auto;
+        }
+
+        /* Seções */
+        .feature-card {
+            border: none;
+            border-radius: 12px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background-color: var(--white-text);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            color: var(--primary-green);
+        }
+
+        .how-it-works-section {
+            background-color: var(--white-text);
+        }
+
+        .step-icon {
+            width: 80px;
+            height: 80px;
+            background-color: #e6f7f7;
+            color: var(--primary-green);
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .cta-section {
+            background: var(--tob-gradient);
+            color: var(--white-text);
+        }
+
+        .team-section {
+            background-color: var(--white-text);
+        }
+
+        .footer-home {
+            background-color: var(--dark-text);
+            color: #a0a0a0;
+        }
+
+        /* Animação de Fade-in */
+        .fade-in-section {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+
+        .fade-in-section.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <img src="{% static 'logo.png' %}" alt="Logo EstágioS" style="height: 40px;">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a href="{% url 'login' %}" class="btn btn-login">Login</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <header class="hero-section">
+        <div class="container hero-content">
+            <img src="{% static 'logo-mini.png' %}" class="mb-5" style="height: 50px;" alt="">
+            <h1 class="display-4">Otimize a Gestão. Potencialize Talentos.</h1>
+            <p class="lead">A plataforma definitiva para gerenciar a frequência, relatórios e desenvolvimento de seus
+                estagiários. Entre em contato para criar sua conta.</p>
+        </div>
+    </header>
+
+    <section class="container my-5 py-5 fade-in-section">
+        <h2 class="text-center mb-5 fw-bold">Recursos Pensados para Você</h2>
+        <div class="row g-4 justify-content-center">
+            <div class="col-md-4">
+                <div class="card feature-card text-center p-4 h-100 border">
+                    <div class="card-body">
+                        <i class="bi bi-calendar-check-fill feature-icon mb-3"></i>
+                        <h5 class="card-title fw-bold">Controle de Frequência Inteligente</h5>
+                        <p class="card-text text-muted">Monitore a assiduidade em tempo real. Nosso sistema permite o
+                            registro de ponto via dispositivos remotos, automatizando o controle de presença, atrasos e
+                            faltas.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card feature-card text-center p-4 h-100 border">
+                    <div class="card-body">
+                        <i class="bi bi-file-earmark-pdf-fill feature-icon mb-3"></i>
+                        <h5 class="card-title fw-bold">Emissão de Relatórios Completos</h5>
+                        <p class="card-text text-muted">Gere relatórios detalhados de frequência, desempenho e
+                            atividades com apenas alguns cliques. Exporte em PDF e tenha a documentação sempre
+                            organizada e pronta.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card feature-card text-center p-4 h-100 border">
+                    <div class="card-body">
+                        <i class="bi bi-clipboard2-check-fill feature-icon mb-3"></i>
+                        <h5 class="card-title fw-bold">Gestão de Demandas e Avaliações</h5>
+                        <p class="card-text text-muted">Centralize e acompanhe as entregas, relatórios trimestrais e
+                            avaliações de desempenho, garantindo o desenvolvimento contínuo dos estagiários.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-5 how-it-works-section fade-in-section">
+        <div class="container">
+            <h2 class="text-center mb-5 fw-bold">Simples, Rápido e Eficiente</h2>
+            <div class="row text-center g-4">
+                <div class="col-md-4">
+                    <div class="step-icon">
+                        <i class="bi bi-person-plus-fill"></i>
+                    </div>
+                    <h5 class="fw-bold">1. Integração</h5>
+                    <p class="text-muted">Nossa equipe realiza o cadastro inicial da sua instituição, gestores e turmas
+                        para garantir uma configuração perfeita.</p>
+                </div>
+                <div class="col-md-4">
+                    <div class="step-icon">
+                        <i class="bi bi-graph-up-arrow"></i>
+                    </div>
+                    <h5 class="fw-bold">2. Monitore</h5>
+                    <p class="text-muted">Acompanhe a frequência em tempo real através dos dispositivos e visualize o
+                        progresso das atividades.</p>
+                </div>
+                <div class="col-md-4">
+                    <div class="step-icon">
+                        <i class="bi bi-check2-circle"></i>
+                    </div>
+                    <h5 class="fw-bold">3. Avalie</h5>
+                    <p class="text-muted">Gere relatórios completos, realize avaliações de desempenho e tome decisões
+                        baseadas em dados precisos.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-5 team-section fade-in-section border">
+        <div class="container text-center">
+            <h2 class="fw-bold">Desenvolvido por Futuros Talentos</h2>
+            <p class="lead text-muted mb-4">Este sistema é o resultado do trabalho e dedicação dos alunos do curso de
+                Informática para a Internet do SESI/SENAI.</p>
+            <div class="col-lg-8 mx-auto">
+                <p class="small text-muted">
+                    Amanda Rodrigues, Antônio Jefferson, Breno Vitor, Caio Carvalho, Felipe Fontinele, Francisco Heitor,
+                    Gabriel Henrique, Guilherme de Brito, Ítalo Rodrigues, Lívia Maria, Marcelo de Sousa, Mateus
+                    Cordeiro e Valkymar Ribeiro.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section id="cta-section" class="py-5 footer-home text-center ">
+        <div class="container">
+            <h2 class="fw-bold">Interessado? Fale com nossa equipe.</h2>
+            <p class="lead my-4">Para criar uma conta para sua instituição e começar a usar o EstágioS, entre em contato
+                conosco. Estamos prontos para agendar uma demonstração.</p>
+            <a href="mailto:contato@estagios.com.br?subject=Interesse no Sistema EstágioS"
+                class="btn btn-light btn-lg px-5">Entrar em Contato</a>
+        </div>
+    </section>
+
+    <footer class="footer-home py-4">
+        <div class="container text-center">
+            <p class="mb-0">&copy; 2025 EstágioS - Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const sections = document.querySelectorAll('.fade-in-section');
+
+            const observer = new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                threshold: 0.1
+            });
+
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+        });
+    </script>
+</body>
+
+</html>

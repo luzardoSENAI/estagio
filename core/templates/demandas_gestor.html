@@ -48,32 +48,266 @@
     </div>
 
     <!-- Lista de Demandas -->
-    <div class="row" id="demandas-container">
-        <!-- Cards de demanda serão inseridos aqui dinamicamente -->
 
+    <div class="row" id="demandas-container">
         <div class="col-lg-6 col-xl-4 mb-4">
-            <div class="card h-100 shadow-sm custom-card-hover" data-demanda-index="${index}">
+            <div class="card h-100 shadow-sm custom-card-hover" data-demanda-index="0">
                 <div
-                    class="card-header ${style.header} border-2 border-bottom-0 d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0 text-dark">Titulo</h5><span class="badge text-bg-primary">Status</span>
+                    class="card-header bg-warning bg-opacity-10 border-warning border-2 border-bottom-0 d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0 text-dark">Relatório Trimestral</h5><span
+                        class="badge bg-warning text-dark">Pendente</span>
                 </div>
                 <div class="card-body">
-                    <h7 class="card-text text-muted">Descrição da atividade tal.</h7>
-                    <ul class="list-unstyled text-muted small">
-                        <li class="mb-2"><i
-                                class="fas fa-calendar-alt me-2 text-primary"></i><strong>Entrega:</strong>Entrega
-                        </li>
+                    <p class="card-text text-muted">Compilar os dados de desempenho dos estagiários do trimestre.</p>
+                    <ul class="list-unstyled text-muted small mt-3">
+                        <li class="mb-2"><i class="fas fa-calendar-alt me-2 text-primary"></i><strong>Entrega:</strong>
+                            20/08/2025</li>
                         <li class="mb-2"><i class="fas fa-user-tie me-2 text-primary"></i><strong>Responsável:</strong>
-                            Nome do gestor</li>
-                        <li><i class="fas fa-building me-2 text-primary"></i><strong>Empresa:</strong>
-                            Nome da Instituicao</li>
+                            Julia Mendes</li>
+                        <li><i class="fas fa-building me-2 text-primary"></i><strong>Empresa:</strong> TechCorp
+                            Solutions</li>
                     </ul>
                 </div>
                 <div class="card-footer bg-white border-top-0 d-flex justify-content-end gap-2">
-                    <button class="btn  btn-sm btn-apagar-demanda">Editar</button>
+                    <a href="#" class="btn btn-outline-primary btn-sm">Ver Detalhes</a>
+                    <button class="btn btn-outline-danger btn-sm btn-apagar-demanda">Apagar</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 col-xl-4 mb-4">
+            <div class="card h-100 shadow-sm custom-card-hover" data-demanda-index="1">
+                <div
+                    class="card-header bg-success bg-opacity-10 border-success border-2 border-bottom-0 d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0 text-dark">Avaliação de Desempenho</h5><span
+                        class="badge bg-success">Concluída</span>
+                </div>
+                <div class="card-body">
+                    <p class="card-text text-muted">Avaliar os estagiários com base em metas e feedback das empresas
+                        parceiras.</p>
+                    <ul class="list-unstyled text-muted small mt-3">
+                        <li class="mb-2"><i class="fas fa-calendar-alt me-2 text-primary"></i><strong>Entrega:</strong>
+                            10/07/2025</li>
+                        <li class="mb-2"><i class="fas fa-user-tie me-2 text-primary"></i><strong>Responsável:</strong>
+                            Ricardo Lopes</li>
+                        <li><i class="fas fa-building me-2 text-primary"></i><strong>Empresa:</strong> NextGen Solutions
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-footer bg-white border-top-0 d-flex justify-content-end gap-2">
+                    <a href="#" class="btn btn-outline-primary btn-sm">Ver Detalhes</a>
+                    <button class="btn btn-outline-danger btn-sm btn-apagar-demanda">Apagar</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 col-xl-4 mb-4">
+            <div class="card h-100 shadow-sm custom-card-hover" data-demanda-index="2">
+                <div
+                    class="card-header bg-primary bg-opacity-10 border-primary border-2 border-bottom-0 d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0 text-dark">Integração Nova Turma</h5><span class="badge bg-primary">Em
+                        Andamento</span>
+                </div>
+                <div class="card-body">
+                    <p class="card-text text-muted">Preparar integração para novos estagiários de agosto.</p>
+                    <ul class="list-unstyled text-muted small mt-3">
+                        <li class="mb-2"><i class="fas fa-calendar-alt me-2 text-primary"></i><strong>Entrega:</strong>
+                            01/08/2025</li>
+                        <li class="mb-2"><i class="fas fa-user-tie me-2 text-primary"></i><strong>Responsável:</strong>
+                            Luana Barbosa</li>
+                        <li><i class="fas fa-building me-2 text-primary"></i><strong>Empresa:</strong> InovaTech</li>
+                    </ul>
+                </div>
+                <div class="card-footer bg-white border-top-0 d-flex justify-content-end gap-2">
+                    <a href="#" class="btn btn-outline-primary btn-sm">Ver Detalhes</a>
+                    <button class="btn btn-outline-danger btn-sm btn-apagar-demanda">Apagar</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 col-xl-4 mb-4">
+            <div class="card h-100 shadow-sm custom-card-hover" data-demanda-index="3">
+                <div
+                    class="card-header bg-warning bg-opacity-10 border-warning border-2 border-bottom-0 d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0 text-dark">Atualizar Lista de Contatos</h5><span
+                        class="badge bg-warning text-dark">Pendente</span>
+                </div>
+                <div class="card-body">
+                    <p class="card-text text-muted">Verificar e atualizar dados de contato de todos os estagiários.</p>
+                    <ul class="list-unstyled text-muted small mt-3">
+                        <li class="mb-2"><i class="fas fa-calendar-alt me-2 text-primary"></i><strong>Entrega:</strong>
+                            15/07/2025</li>
+                        <li class="mb-2"><i class="fas fa-user-tie me-2 text-primary"></i><strong>Responsável:</strong>
+                            Marcos Silva</li>
+                        <li><i class="fas fa-building me-2 text-primary"></i><strong>Empresa:</strong> TalentBridge
+                            Brasil</li>
+                    </ul>
+                </div>
+                <div class="card-footer bg-white border-top-0 d-flex justify-content-end gap-2">
+                    <a href="#" class="btn btn-outline-primary btn-sm">Ver Detalhes</a>
+                    <button class="btn btn-outline-danger btn-sm btn-apagar-demanda">Apagar</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 col-xl-4 mb-4">
+            <div class="card h-100 shadow-sm custom-card-hover" data-demanda-index="4">
+                <div
+                    class="card-header bg-primary bg-opacity-10 border-primary border-2 border-bottom-0 d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0 text-dark">Workshop de Soft Skills</h5><span class="badge bg-primary">Em
+                        Andamento</span>
+                </div>
+                <div class="card-body">
+                    <p class="card-text text-muted">Organizar workshop sobre habilidades interpessoais para estagiários.
+                    </p>
+                    <ul class="list-unstyled text-muted small mt-3">
+                        <li class="mb-2"><i class="fas fa-calendar-alt me-2 text-primary"></i><strong>Entrega:</strong>
+                            05/09/2025</li>
+                        <li class="mb-2"><i class="fas fa-user-tie me-2 text-primary"></i><strong>Responsável:</strong>
+                            Ana Pereira</li>
+                        <li><i class="fas fa-building me-2 text-primary"></i><strong>Empresa:</strong> InovaTech</li>
+                    </ul>
+                </div>
+                <div class="card-footer bg-white border-top-0 d-flex justify-content-end gap-2">
+                    <a href="#" class="btn btn-outline-primary btn-sm">Ver Detalhes</a>
+                    <button class="btn btn-outline-danger btn-sm btn-apagar-demanda">Apagar</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 col-xl-4 mb-4">
+            <div class="card h-100 shadow-sm custom-card-hover" data-demanda-index="5">
+                <div
+                    class="card-header bg-success bg-opacity-10 border-success border-2 border-bottom-0 d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0 text-dark">Reunião de Alinhamento</h5><span
+                        class="badge bg-success">Concluída</span>
+                </div>
+                <div class="card-body">
+                    <p class="card-text text-muted">Marcar reunião com gestores para revisar planos de estágio.</p>
+                    <ul class="list-unstyled text-muted small mt-3">
+                        <li class="mb-2"><i class="fas fa-calendar-alt me-2 text-primary"></i><strong>Entrega:</strong>
+                            12/07/2025</li>
+                        <li class="mb-2"><i class="fas fa-user-tie me-2 text-primary"></i><strong>Responsável:</strong>
+                            Felipe Costa</li>
+                        <li><i class="fas fa-building me-2 text-primary"></i><strong>Empresa:</strong> TechCorp
+                            Solutions</li>
+                    </ul>
+                </div>
+                <div class="card-footer bg-white border-top-0 d-flex justify-content-end gap-2">
+                    <a href="#" class="btn btn-outline-primary btn-sm">Ver Detalhes</a>
+                    <button class="btn btn-outline-danger btn-sm btn-apagar-demanda">Apagar</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 col-xl-4 mb-4">
+            <div class="card h-100 shadow-sm custom-card-hover" data-demanda-index="6">
+                <div
+                    class="card-header bg-primary bg-opacity-10 border-primary border-2 border-bottom-0 d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0 text-dark">teste</h5><span class="badge bg-primary">Em Andamento</span>
+                </div>
+                <div class="card-body">
+                    <p class="card-text text-muted">descrição teste</p>
+                    <ul class="list-unstyled text-muted small mt-3">
+                        <li class="mb-2"><i class="fas fa-calendar-alt me-2 text-primary"></i><strong>Entrega:</strong>
+                            17/07/2025</li>
+                        <li class="mb-2"><i class="fas fa-user-tie me-2 text-primary"></i><strong>Responsável:</strong>
+                            teste</li>
+                        <li><i class="fas fa-building me-2 text-primary"></i><strong>Empresa:</strong> testee1</li>
+                    </ul>
+                </div>
+                <div class="card-footer bg-white border-top-0 d-flex justify-content-end gap-2">
+                    <a href="#" class="btn btn-outline-primary btn-sm">Ver Detalhes</a>
+                    <button class="btn btn-outline-danger btn-sm btn-apagar-demanda">Apagar</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 col-xl-4 mb-4">
+            <div class="card h-100 shadow-sm custom-card-hover" data-demanda-index="7">
+                <div
+                    class="card-header bg-success bg-opacity-10 border-success border-2 border-bottom-0 d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0 text-dark">2</h5><span class="badge bg-success">Concluída</span>
+                </div>
+                <div class="card-body">
+                    <p class="card-text text-muted">2</p>
+                    <ul class="list-unstyled text-muted small mt-3">
+                        <li class="mb-2"><i class="fas fa-calendar-alt me-2 text-primary"></i><strong>Entrega:</strong>
+                            21/08/2025</li>
+                        <li class="mb-2"><i class="fas fa-user-tie me-2 text-primary"></i><strong>Responsável:</strong>
+                            22</li>
+                        <li><i class="fas fa-building me-2 text-primary"></i><strong>Empresa:</strong> 22</li>
+                    </ul>
+                </div>
+                <div class="card-footer bg-white border-top-0 d-flex justify-content-end gap-2">
+                    <a href="#" class="btn btn-outline-primary btn-sm">Ver Detalhes</a>
+                    <button class="btn btn-outline-danger btn-sm btn-apagar-demanda">Apagar</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 col-xl-4 mb-4">
+            <div class="card h-100 shadow-sm custom-card-hover" data-demanda-index="8">
+                <div
+                    class="card-header bg-success bg-opacity-10 border-success border-2 border-bottom-0 d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0 text-dark">2</h5><span class="badge bg-success">Concluída</span>
+                </div>
+                <div class="card-body">
+                    <p class="card-text text-muted">2</p>
+                    <ul class="list-unstyled text-muted small mt-3">
+                        <li class="mb-2"><i class="fas fa-calendar-alt me-2 text-primary"></i><strong>Entrega:</strong>
+                            21/08/2025</li>
+                        <li class="mb-2"><i class="fas fa-user-tie me-2 text-primary"></i><strong>Responsável:</strong>
+                            22</li>
+                        <li><i class="fas fa-building me-2 text-primary"></i><strong>Empresa:</strong> 22</li>
+                    </ul>
+                </div>
+                <div class="card-footer bg-white border-top-0 d-flex justify-content-end gap-2">
+                    <a href="#" class="btn btn-outline-primary btn-sm">Ver Detalhes</a>
+                    <button class="btn btn-outline-danger btn-sm btn-apagar-demanda">Apagar</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 col-xl-4 mb-4">
+            <div class="card h-100 shadow-sm custom-card-hover" data-demanda-index="9">
+                <div
+                    class="card-header bg-primary bg-opacity-10 border-primary border-2 border-bottom-0 d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0 text-dark">RAONNY DA SILVA</h5><span class="badge bg-primary">Em
+                        Andamento</span>
+                </div>
+                <div class="card-body">
+                    <p class="card-text text-muted">.COM.BR</p>
+                    <ul class="list-unstyled text-muted small mt-3">
+                        <li class="mb-2"><i class="fas fa-calendar-alt me-2 text-primary"></i><strong>Entrega:</strong>
+                            06/08/2025</li>
+                        <li class="mb-2"><i class="fas fa-user-tie me-2 text-primary"></i><strong>Responsável:</strong>
+                            GUILHERME</li>
+                        <li><i class="fas fa-building me-2 text-primary"></i><strong>Empresa:</strong> CAIO</li>
+                    </ul>
+                </div>
+                <div class="card-footer bg-white border-top-0 d-flex justify-content-end gap-2">
+                    <a href="#" class="btn btn-outline-primary btn-sm">Ver Detalhes</a>
+                    <button class="btn btn-outline-danger btn-sm btn-apagar-demanda">Apagar</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 col-xl-4 mb-4">
+            <div class="card h-100 shadow-sm custom-card-hover" data-demanda-index="10">
+                <div
+                    class="card-header bg-primary bg-opacity-10 border-primary border-2 border-bottom-0 d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0 text-dark">Teste de Demanda 1</h5><span class="badge bg-primary">Em
+                        Andamento</span>
+                </div>
+                <div class="card-body">
+                    <p class="card-text text-muted">Demanda teste 1</p>
+                    <ul class="list-unstyled text-muted small mt-3">
+                        <li class="mb-2"><i class="fas fa-calendar-alt me-2 text-primary"></i><strong>Entrega:</strong>
+                            06/08/2025</li>
+                        <li class="mb-2"><i class="fas fa-user-tie me-2 text-primary"></i><strong>Responsável:</strong>
+                            Luzardo</li>
+                        <li><i class="fas fa-building me-2 text-primary"></i><strong>Empresa:</strong> Senai</li>
+                    </ul>
+                </div>
+                <div class="card-footer bg-white border-top-0 d-flex justify-content-end gap-2">
+                    <a href="#" class="btn btn-outline-primary btn-sm">Ver Detalhes</a>
+                    <button class="btn btn-outline-danger btn-sm btn-apagar-demanda">Apagar</button>
                 </div>
             </div>
         </div>
     </div>
+
+
 </div>
 {% endblock %}
