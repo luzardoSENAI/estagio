@@ -58,7 +58,6 @@
             right: 0;
             bottom: 0;
             background: rgba(2, 110, 107, 0.8);
-            /* Overlay com a cor --primary-green e 80% de opacidade */
         }
 
         .hero-content {
@@ -138,6 +137,87 @@
         .fade-in-section.is-visible {
             opacity: 1;
             transform: translateY(0);
+        }
+
+        /* ===== NOVA SEÇÃO DE PLANOS (TEMA CLARO) ===== */
+        .pricing-card-light {
+            background-color: var(--white-text);
+            border: 1px solid #dee2e6;
+            border-radius: 12px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .pricing-card-light:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .pricing-card-light.highlight {
+            border: 2px solid var(--primary-green);
+        }
+
+        .pricing-card-light .card-title {
+            color: var(--dark-text);
+        }
+
+        .pricing-card-light .card-price {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: var(--dark-text);
+        }
+
+        .pricing-card-light .list-group-item {
+            background-color: transparent;
+            border: none;
+            padding-left: 0;
+            color: #6c757d;
+            /* Cor de texto padrão para itens da lista */
+        }
+
+        .btn-plan-light {
+            background-color: var(--primary-green);
+            color: var(--white-text);
+            font-weight: 600;
+            padding: 0.75rem 1rem;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-plan-light:hover {
+            background-color: #015a58;
+            /* Tom mais escuro do verde primário */
+            color: var(--white-text);
+        }
+
+        /* CSS PARA OS CARDS DA EQUIPE */
+        .team-card {
+            border: none;
+            border-radius: 12px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background-color: var(--white-text);
+        }
+
+        .team-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .team-card-img {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border: 4px solid var(--white-text);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .social-links a {
+            color: var(--primary-green);
+            font-size: 1.2rem;
+            transition: color 0.3s ease;
+        }
+
+        .social-links a:hover {
+            color: var(--dark-text);
         }
     </style>
 </head>
@@ -242,28 +322,169 @@
         </div>
     </section>
 
-    <section class="py-5 team-section fade-in-section border">
-        <div class="container text-center">
-            <h2 class="fw-bold">Desenvolvido por Futuros Talentos</h2>
-            <p class="lead text-muted mb-4">Este sistema é o resultado do trabalho e dedicação dos alunos do curso de
-                Informática para a Internet do SESI/SENAI.</p>
-            <div class="col-lg-8 mx-auto">
-                <p class="small text-muted">
-                    Amanda Rodrigues, Antônio Jefferson, Breno Vitor, Caio Carvalho, Felipe Fontinele, Francisco Heitor,
-                    Gabriel Henrique, Guilherme de Brito, Ítalo Rodrigues, Lívia Maria, Marcelo de Sousa, Mateus
-                    Cordeiro e Valkymar Ribeiro.
-                </p>
+    <section id="planos" class="container my-5 py-5 fade-in-section">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold">Nossos Planos</h2>
+            <p class="lead text-muted">Encontre o plano perfeito para atender às suas necessidades.</p>
+        </div>
+        <div class="row g-4 justify-content-center">
+
+            <div class="col-lg-4 col-md-6">
+                <div class="card pricing-card-light h-100">
+                    <div class="card-body p-4 d-flex flex-column">
+                        <h5 class="card-title fw-bold">Plano Gratuito</h5>
+                        <p class="text-muted">Para quem está começando ou precisa de uma solução simples.</p>
+                        <h3 class="card-price my-3">R$ 0<small class="text-muted fs-5"> /mês</small></h3>
+                        <ul class="list-group list-group-flush mt-3 mb-4">
+                            <li class="list-group-item"><i class="bi bi-check-lg me-2"
+                                    style="color: var(--primary-green);"></i> Cadastro de até 1 empresa e 5 alunos</li>
+                            <li class="list-group-item"><i class="bi bi-check-lg me-2"
+                                    style="color: var(--primary-green);"></i> 1 supervisor cadastrado</li>
+                            <li class="list-group-item"><i class="bi bi-check-lg me-2"
+                                    style="color: var(--primary-green);"></i> Geração de documentos básicos</li>
+                            <li class="list-group-item"><i class="bi bi-check-lg me-2"
+                                    style="color: var(--primary-green);"></i> Acompanhamento simples de estágios</li>
+                            <li class="list-group-item"><i class="bi bi-check-lg me-2"
+                                    style="color: var(--primary-green);"></i> Suporte por e-mail (resposta em até 72h)
+                            </li>
+                        </ul>
+                        <a href="#" class="btn btn-plan-light w-100 mt-auto">Começar</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <div class="card pricing-card-light h-100 highlight">
+                    <div class="card-body p-4 d-flex flex-column">
+                        <h5 class="card-title fw-bold">Plano Profissional</h5>
+                        <p class="text-muted">Ideal para pequenas e médias empresas ou instituições de ensino.</p>
+                        <h3 class="card-price my-3">R$ 79,00<small class="text-muted fs-5"> /mês</small></h3>
+                        <ul class="list-group list-group-flush mt-3 mb-4">
+                            <li class="list-group-item"><i class="bi bi-check-lg me-2"
+                                    style="color: var(--primary-green);"></i> Acompanhamento completo de estágios</li>
+                            <li class="list-group-item"><i class="bi bi-check-lg me-2"
+                                    style="color: var(--primary-green);"></i> Supervisores ilimitados</li>
+                            <li class="list-group-item"><i class="bi bi-check-lg me-2"
+                                    style="color: var(--primary-green);"></i> Geração e assinatura de documentos</li>
+                            <li class="list-group-item"><i class="bi bi-check-lg me-2"
+                                    style="color: var(--primary-green);"></i> Cadastro de até 10 empresas e 100 alunos
+                            </li>
+                            <li class="list-group-item"><i class="bi bi-check-lg me-2"
+                                    style="color: var(--primary-green);"></i> Relatórios de desempenho e horas</li>
+                        </ul>
+                        <a href="#" class="btn btn-plan-light w-100 mt-auto">Começar</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <div class="card pricing-card-light h-100">
+                    <div class="card-body p-4 d-flex flex-column">
+                        <h5 class="card-title fw-bold">Plano Corporativo</h5>
+                        <p class="text-muted">Para grandes empresas com necessidades avançadas.</p>
+                        <h3 class="card-price my-3">R$ 249,90<small class="text-muted fs-5"> /mês</small></h3>
+                        <ul class="list-group list-group-flush mt-3 mb-4">
+                            <li class="list-group-item"><i class="bi bi-check-lg me-2"
+                                    style="color: var(--primary-green);"></i> Empresas e alunos ilimitados</li>
+                            <li class="list-group-item"><i class="bi bi-check-lg me-2"
+                                    style="color: var(--primary-green);"></i> Personalização do sistema com logo e cores
+                            </li>
+                            <li class="list-group-item"><i class="bi bi-check-lg me-2"
+                                    style="color: var(--primary-green);"></i> Integração com outros sistemas via API
+                            </li>
+                            <li class="list-group-item"><i class="bi bi-check-lg me-2"
+                                    style="color: var(--primary-green);"></i> Permissões de acesso diferenciadas</li>
+                            <li class="list-group-item"><i class="bi bi-check-lg me-2"
+                                    style="color: var(--primary-green);"></i> Relatórios avançados e exportação de dados
+                            </li>
+                            <li class="list-group-item"><i class="bi bi-check-lg me-2"
+                                    style="color: var(--primary-green);"></i> Suporte prioritário (atendimento dedicado)
+                            </li>
+                        </ul>
+                        <a href="#" class="btn btn-plan-light w-100 mt-auto">Começar</a>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
 
-    <section id="cta-section" class="py-5 footer-home text-center ">
-        <div class="container">
-            <h2 class="fw-bold">Interessado? Fale com nossa equipe.</h2>
-            <p class="lead my-4">Para criar uma conta para sua instituição e começar a usar o EstágioS, entre em contato
-                conosco. Estamos prontos para agendar uma demonstração.</p>
-            <a href="mailto:contato@estagios.com.br?subject=Interesse no Sistema EstágioS"
-                class="btn btn-light btn-lg px-5">Entrar em Contato</a>
+    <section class="py-5 team-section fade-in-section border">
+        <div class="container text-center">
+            <h2 class="fw-bold">Desenvolvido por Futuros Talentos</h2>
+            <p class="lead text-muted mb-5">Conheça alguns dos desenvolvedores do curso de Informática para a Internet
+                do SESI/SENAI.</p>
+            <div class="row g-4 justify-content-center">
+                <div class="col-lg-3 col-md-4 col-6">
+                    <div class="card team-card h-100 p-3">
+                        <img src="https://i.pravatar.cc/150?u=amanda" class="team-card-img rounded-circle mx-auto"
+                            alt="Foto de Amanda Rodrigues">
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold">Amanda Rodrigues</h5>
+                            <p class="card-text text-muted">Desenvolvedora Front-End</p>
+                            <div class="social-links d-flex justify-content-center gap-3">
+                                <a href="#"><i class="bi bi-linkedin"></i></a>
+                                <a href="#"><i class="bi bi-github"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-4 col-6">
+                    <div class="card team-card h-100 p-3">
+                        <img src="https://i.pravatar.cc/150?u=antonio" class="team-card-img rounded-circle mx-auto"
+                            alt="Foto de Antônio Jefferson">
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold">Antônio Jefferson</h5>
+                            <p class="card-text text-muted">Desenvolvedor Back-End</p>
+                            <div class="social-links d-flex justify-content-center gap-3">
+                                <a href="#"><i class="bi bi-linkedin"></i></a>
+                                <a href="#"><i class="bi bi-github"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-4 col-6">
+                    <div class="card team-card h-100 p-3">
+                        <img src="https://i.pravatar.cc/150?u=breno" class="team-card-img rounded-circle mx-auto"
+                            alt="Foto de Breno Vitor">
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold">Breno Vitor</h5>
+                            <p class="card-text text-muted">UI/UX Designer</p>
+                            <div class="social-links d-flex justify-content-center gap-3">
+                                <a href="#"><i class="bi bi-linkedin"></i></a>
+                                <a href="#"><i class="bi bi-github"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-4 col-6">
+                    <div class="card team-card h-100 p-3">
+                        <img src="https://i.pravatar.cc/150?u=caio" class="team-card-img rounded-circle mx-auto"
+                            alt="Foto de Caio Carvalho">
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold">Caio Carvalho</h5>
+                            <p class="card-text text-muted">Desenvolvedor Full Stack</p>
+                            <div class="social-links d-flex justify-content-center gap-3">
+                                <a href="#"><i class="bi bi-linkedin"></i></a>
+                                <a href="#"><i class="bi bi-github"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-4 col-6">
+                    <div class="card team-card h-100 p-3">
+                        <img src="https://i.pravatar.cc/150?u=felipe" class="team-card-img rounded-circle mx-auto"
+                            alt="Foto de Felipe Fontinele">
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold">Felipe Fontinele</h5>
+                            <p class="card-text text-muted">DBA & Infra</p>
+                            <div class="social-links d-flex justify-content-center gap-3">
+                                <a href="#"><i class="bi bi-linkedin"></i></a>
+                                <a href="#"><i class="bi bi-github"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
