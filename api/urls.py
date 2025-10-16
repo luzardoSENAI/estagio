@@ -4,7 +4,7 @@ from . import views
 
 urlpatterns = [
     path('',views.api),
-    path('frequencia/registrar/',views.registrar_frequencia,name='registrar_frequencia'),
+    path('frequencia/registrar/<str:turma>',views.registrar_frequencia,name='registrar_frequencia'),
     path('ping_dispositivo/',views.ping_dispositivo,name='ping_dispositivo'),
 
     # GESTOR
