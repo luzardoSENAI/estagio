@@ -1,0 +1,34 @@
+.custom-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: none; /* começa escondido */
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0,0,0,0.5);
+  z-index: 1000;
+}
+
+.custom-modal-dialog {
+  max-width: 600px;
+  width: 90%;
+}
+
+.custom-modal-content {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.custom-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.custom-modal-close {
+  cursor: pointer;
+  font-size: 1.5rem;
+}

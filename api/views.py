@@ -16,7 +16,7 @@ def api(request):
     return JsonResponse({'RESPONSE':200})
 
 @csrf_exempt
-def registrar_frequencia(request,turma):
+def registrar_frequencia(request):
     if request.method == "POST":
         try:
             body = json.loads(request.body)
@@ -25,13 +25,9 @@ def registrar_frequencia(request,turma):
         except json.JSONDecodeError:
             return JsonResponse({"error": "JSON inválido"}, status=400)
         
-        turma_get = Turma.objects.get(nome=turma)
         dispositivo = Dispositvo.objects.get(uuid = d_uuid)
-
-        if turma_get.instituicao != dispositivo.instituicao:
-            return(JsonResponse({'status':'Turma/Dispositivo Diferentes'}))
-
-        instituicao = turma_get.instituicao
+        
+        instituicao = dispositivo.instituicao
 
         response = []
 
@@ -658,3 +654,26 @@ def buscar_dados_para_relatorio(req_json):
 
     # Retorno padrão caso o tipo de relatório não seja reconhecido
     return [], turma
+
+@csrf_exempt
+def get_cpf(request,cpf,turma):
+    estagiario = Usuario.objects.filter(cpf=cpf).first()
+    turma = Turma.objects.filter(id=turma).first()
+    if estagiario and turma:
+            if (estagiario.turma_empresa and estagiario.turma_empresa == turma) or \
+            (estagiario.turma_escola and estagiario.turma_escola == turma):
+                return JsonResponse({
+                        'nome':estagiario.nome,
+                        'status':'Estagiário já está na turma',
+                        })
+            else:
+                return JsonResponse({
+                    'nome':estagiario.nome,
+                    'status':True
+                })
+    else:
+        return JsonResponse(
+            {
+                'nome':'Não encontrado',
+                'status':False
+             })

@@ -2,6 +2,9 @@
 {% block title %}Cadastrar Estagiário{% endblock %}
 {% load static %}
 {% block header %}{% endblock %}
+{% block app_css %}
+<link rel="stylesheet" href="{% static 'core/css/cadastrar_estagiario.css' %}">
+{% endblock %}
 
 {% block app_js %}
 <script type="module" src="{% static 'core/js/cadastrar_estagiario.js' %}"></script>
@@ -17,10 +20,29 @@
             <h5>Acompanhe e gerencie os estagiários cadastrados nas suas turmas.</p>
         </div>
     </div>
+
     <div id="tabelas-container">
-        
+
     </div>
 
+</div>
+
+<!-- Template do modal -->
+<div id="modal-template" class="custom-modal" style="display:none;">
+  <div class="custom-modal-dialog">
+    <div class="custom-modal-content">
+      <div class="custom-modal-header">
+        <h5 class="custom-modal-title">Cadastro de Estagiário</h5>
+        <span class="custom-modal-close">&times;</span>
+      </div>
+      <div class="custom-modal-body">
+        <!-- Conteúdo dinâmico aqui -->
+      </div>
+      <div class="custom-modal-footer">
+        <!-- Botões dinâmicos -->
+      </div>
+    </div>
+  </div>
 </div>
 
 {% endblock %}
