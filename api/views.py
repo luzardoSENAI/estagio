@@ -1,6 +1,7 @@
 
 from django.shortcuts import render, redirect
 from django.http import JsonResponse, HttpResponse
+from django.contrib.auth.models import User
 from usuarios.models import Usuario, Registro
 from instituicoes.models import Dispositvo, Turma, Instituicao
 from django.utils import timezone
@@ -165,6 +166,8 @@ def frequencia_gestor(request):
                 estagiarios.append({
                     'nome': e.nome,
                     'email':e.email,
+                    'cpf':e.cpf,
+                    'usuario':e.user.username,
                     'telefone':e.telefone,
                     'uuid':e.uuid,
                     'matricula':e.matricula,
@@ -655,25 +658,104 @@ def buscar_dados_para_relatorio(req_json):
     # Retorno padrão caso o tipo de relatório não seja reconhecido
     return [], turma
 
-@csrf_exempt
 def get_cpf(request,cpf,turma):
+    usuario = Usuario.objects.get(user=request.user)
+
+    if usuario.cargo != 'gestor':
+        return JsonResponse({'status':'Acesso negado'})
+    
     estagiario = Usuario.objects.filter(cpf=cpf).first()
     turma = Turma.objects.filter(id=turma).first()
     if estagiario and turma:
-            if (estagiario.turma_empresa and estagiario.turma_empresa == turma) or \
+        if (estagiario.turma_empresa and estagiario.turma_empresa == turma) or \
             (estagiario.turma_escola and estagiario.turma_escola == turma):
-                return JsonResponse({
-                        'nome':estagiario.nome,
-                        'status':'Estagiário já está na turma',
-                        })
-            else:
-                return JsonResponse({
-                    'nome':estagiario.nome,
-                    'status':True
+            return JsonResponse({
+            'nome':estagiario.nome,
+            'status':'Estagiário já está na turma',
+            })
+        else:
+            return JsonResponse({
+                'nome':estagiario.nome,
+                'status':True
                 })
     else:
         return JsonResponse(
             {
                 'nome':'Não encontrado',
                 'status':False
-             })
+            })
+    
+def atribuir_estagiario(request):
+    if request.method == 'POST':
+        body = json.loads(request.body)
+        cpf = body.get('cpf')
+        turma_id = body.get('turma_id')
+        turma = Turma.objects.get(id=turma_id)
+        estagiario = Usuario.objects.get(cpf=cpf)
+        instituicao_tipo = turma.instituicao.tipo
+        if instituicao_tipo == 'empresa':
+            estagiario.turma_empresa = turma
+        elif instituicao_tipo == 'escola':
+            estagiario.turma_escola = turma
+        estagiario.save()
+    return JsonResponse({'status':'ok'})
+
+@csrf_exempt
+def cadastrar_estagiario(request):
+    if request.method != 'POST':
+        return JsonResponse({'status': 'erro', 'mensagem': 'Método não permitido'}, status=405)
+    
+    try:
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({'status': 'erro', 'mensagem': 'JSON inválido'}, status=400)
+    
+    # Campos obrigatórios
+    password = data.get('senha')
+    cpf = data.get('cpf')
+
+    if not password or not cpf:
+        return JsonResponse({'status': 'erro', 'mensagem': 'Campos obrigatórios faltando'}, status=400)
+    
+    # Verifica se CPF ou username já existem
+    if Usuario.objects.filter(cpf=cpf).exists():
+        return JsonResponse({'status': 'erro', 'mensagem': 'Usuário ou CPF já cadastrado'}, status=400)
+    
+    nome = data.get('nome')
+    username_base = nome.lower().replace(' ', '')  # remove espaços e coloca em minúsculo
+    username = username_base
+    contador = 1
+
+    # verifica se já existe no banco    
+    while User.objects.filter(username=username).exists():
+        username = f"{username_base}{contador}"
+        contador += 1
+
+    # Cria o User
+    user = User.objects.create_user(username=username, password=password)
+
+    turma_id = data.get('turma_id')
+    turma = Turma.objects.get(id=turma_id)
+    turma_tipo = turma.instituicao.tipo
+
+    # Cria o Usuario vinculado ao User
+    usuario = Usuario.objects.create(
+        user=user,
+        nome=data.get('nome'),
+        cpf=cpf,
+        email=data.get('email'),
+        data_nascimento=data.get('nascimento'),
+        telefone=data.get('telefone'),
+        endereco=data.get('endereco'),
+        cargo=data.get('cargo', 'estagiario'),
+        turma_empresa=turma if turma_tipo == 'empresa' else None,
+        turma_escola=turma if turma_tipo == 'escola' else None,
+    )
+
+    # Gera matrícula automática
+    ano_atual = datetime.now().year
+    id_formatado = f"{usuario.id:05d}"
+    usuario.matricula = f"{ano_atual}{id_formatado}"
+    usuario.save()
+    
+    return JsonResponse({'status': 'sucesso', 'mensagem': 'Usuário cadastrado com sucesso', 'usuario_id': usuario.id})

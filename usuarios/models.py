@@ -57,16 +57,19 @@ class Usuario(models.Model):
     
     def __str__(self):
         return f'{self.user.username} - {self.cargo}'
-
-@receiver(post_save, sender=User)
-def create_profile(sender, instance, created, **kwargs):
-    if created:
-        usuario = Usuario.objects.create(user=instance)
-        ano_atual = datetime.now().year
-        id_formatado = f"{usuario.id:05d}"
-        matricula_gerada = f"{ano_atual}{id_formatado}"
-        usuario.matricula = matricula_gerada
-        usuario.save()
+    
+# @receiver(post_save, sender=User)
+# def create_profile(sender, instance, created, **kwargs):
+#     if created:
+#         # só cria se ainda não existir um perfil
+#         if not hasattr(instance, 'usuario'):
+#             usuario = Usuario.objects.create(user=instance)
+            
+#             # gera matrícula
+#             ano_atual = datetime.now().year
+#             id_formatado = f"{usuario.id:05d}"
+#             usuario.matricula = f"{ano_atual}{id_formatado}"
+#             usuario.save()
 
 class Registro(models.Model):
     estagiario = models.ForeignKey(Usuario, on_delete=models.CASCADE,limit_choices_to={'cargo': 'estagiario'})

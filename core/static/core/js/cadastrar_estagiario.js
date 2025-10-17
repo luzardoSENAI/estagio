@@ -28,9 +28,11 @@ async function popularTabelas() {
                         <thead>
                             <tr>
                                 <td>Estagiário <i class="bi bi-person-fill"></i></td>
+                                <td>Usuário <i class="bi bi-telephone-fill"></i></td>
                                 <td>Email <i class="bi bi-envelope-at-fill"></i></td>
                                 <td>Contato <i class="bi bi-telephone-fill"></i></td>
                                 <td>Matrícula <i class="bi bi-layout-sidebar"></i></td>
+                                <td>CPF <i class="bi bi-info-circle"></i></td>
                                 <td>Ações <i class="bi bi-info-circle"></i></td>
                             </tr>
                         </thead>
@@ -39,9 +41,11 @@ async function popularTabelas() {
                                             <tbody>
                                 <tr>
                                     <td class="border">${e.nome}</td>
+                                    <td class="border">${e.usuario}</td>
                                     <td class="border">${e.email}</td>
                                     <td class="border">${e.telefone}</td>
                                     <td class="border">${e.matricula}</td>
+                                    <td class="border">${e.cpf}</td>
                                     <td class="info-cell border">
                                         <i class="bi bi-pen"></i>
                                     </td>
@@ -104,7 +108,7 @@ document.addEventListener('click', async (e) => {
     const conteudo1 = `
     <label>Digite o CPF:</label>
     <br>
-    <input type="text" class='form-control my-3' id="inputCPFCheck" placeholder="000.000.000-00">
+    <input type="number" class='form-control my-3' id="inputCPFCheck" placeholder="000.000.000-00">
     <div id="cpfError" style="color:red; display:none;">Por favor, insira um CPF.</div>
   `;
     const footer1 = `<button id="btnProsseguir1" class='btn primary'>Prosseguir</button>`;
@@ -134,10 +138,10 @@ document.addEventListener('click', async (e) => {
             modal2.querySelector('#btnAtribuir').addEventListener('click', async () => {
                 await fetch(`/api/atribuir_estagiario/`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 'Content-Type': 'application/json' , 'X-CSRFToken': csrf_token},
                     body: JSON.stringify({ cpf: cpfSalvo, turma_id: turmaIdAtual })
                 });
-                alert('Estagiário atribuído com sucesso!');
+                popularTabelas()
                 modal2.remove();
             });
 
@@ -147,7 +151,7 @@ document.addEventListener('click', async (e) => {
             <form id="formCadastroEstagiario">
                 <div class="mb-3">
                     <label for="inputNome" class="form-label">Nome</label>
-                    <input type="text" class="form-control" id="inputNome" placeholder="Digite seu nome" required>
+                    <input type="text" class="form-control" id="inputNome" placeholder="Digite o nome" required>
                 </div>
                 <div class="mb-3">
                     <label for="inputEmail" class="form-label">E-mail</label>
@@ -159,7 +163,7 @@ document.addEventListener('click', async (e) => {
                 </div>
                 <div class="mb-3">
                     <label for="inputCPF" class="form-label">CPF</label>
-                    <input type="text" class="form-control" id="inputCPF" placeholder="000.000.000-00" value='${cpfSalvo}' required>
+                    <input type="number" class="form-control" id="inputCPF" placeholder="000.000.000-00" value='${cpfSalvo}' required>
                 </div>
                 <div class="mb-3">
                     <label for="inputNascimento" class="form-label">Data de Nascimento</label>
@@ -173,25 +177,30 @@ document.addEventListener('click', async (e) => {
                     <label for="inputTelefone" class="form-label">Telefone</label>
                     <input type="tel" class="form-control" id="inputTelefone" placeholder="(00) 00000-0000">
                 </div>
+                <button id="btnCadastrar" class="btn primary">Cadastrar</button>
             </form>
         `;
-            const footer3 = `<button id="btnCadastrar" class="btn primary">Cadastrar</button>`;
-            const modal3 = abrirModal(conteudo3, footer3);
+            const modal3 = abrirModal(conteudo3,'');
 
-            modal3.querySelector('#btnCadastrar').addEventListener('click', async () => {
+            document.getElementById('formCadastroEstagiario').addEventListener('submit', async (e) => {
+                e.preventDefault()
                 const dados = {
                     nome: modal3.querySelector('#inputNome').value,
-                    cpf: modal3.querySelector('#inputCPF').value,
                     email: modal3.querySelector('#inputEmail').value,
+                    senha: modal3.querySelector('#inputSenha').value,
+                    cpf: modal3.querySelector('#inputCPF').value,
                     nascimento: modal3.querySelector('#inputNascimento').value,
+                    endereco: modal3.querySelector('#inputEndereco').value,
+                    telefone: modal3.querySelector('#inputTelefone').value,
                     turma_id: turmaIdAtual
                 };
-                await fetch(`/api/estagiarios/cadastrar/`, {
+                
+                await fetch(`/api/cadastrar_estagiario/`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(dados)
                 });
-                alert('Novo estagiário cadastrado com sucesso!');
+                popularTabelas()
                 modal3.remove();
             });
 

@@ -12,5 +12,8 @@ urlpatterns = [
     path('exportar_pdf/',views.exportar_pdf,name='exportar_pdf'),
     path('demandas_gestor',views.demandas_gestor,name='demandas_gestor'),
     path('dispositivos',views.dispositivos,name='dispositivos'),
-    path('get_cpf/<str:cpf>/<int:turma>',views.get_cpf,name='get_cpf')
+    path('get_cpf/<str:cpf>/<int:turma>',views.get_cpf,name='get_cpf'),
+    path('atribuir_estagiario/',views.atribuir_estagiario,name='atribuir_estagiario'),
+    path('cadastrar_estagiario/',views.cadastrar_estagiario,name='cadastrar_estagiario'),
+
 ]
