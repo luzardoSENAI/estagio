@@ -33,19 +33,32 @@ def registrar_frequencia(request,turma):
 
         instituicao = turma_get.instituicao
 
-        if instituicao.tipo == 'escola':
-            turma = estagiario.turma_escola
-        elif instituicao.tipo == 'empresa':
-            turma = estagiario.turma_empresa
-        if not turma:
-            return JsonResponse({"erro": "Estagiário não está alocado a uma turma nessa instituição"}, status=400)
-        hoje = date.today()
-        dia_semana = [
-            'segunda', 'terça', 'quarta', 'quinta', 'sexta', 'sabado', 'domingo'
-        ][hoje.weekday()]  # retorna o nome do dia
-        
-        hora_entrada = turma.hora_entrada  
-        hora_saida = turma.hora_saida
+        response = []
+
+        if registros.__len__() == 0:
+            return JsonResponse({'status':'Sem registros para enviar'}, safe=False)
+
+        for r in registros:
+            estagiario = Usuario.objects.get(uuid=r['uuid'])
+            if instituicao.tipo == 'escola':
+                turma = estagiario.turma_escola
+            elif instituicao.tipo == 'empresa':
+                turma = estagiario.turma_empresa
+            if not turma:
+                response.append({
+                    'aluno':r['uuid'],
+                    'status':'Não pertence a turma'
+                })
+                continue
+
+            hoje = datetime.strptime(r['data'], '%Y-%m-%d').date()
+
+            dia_semana = [
+                'segunda', 'terça', 'quarta', 'quinta', 'sexta', 'sabado', 'domingo'
+            ][hoje.weekday()]  # retorna o nome do dia
+            
+            hora_entrada = turma.hora_entrada  
+            hora_saida = turma.hora_saida
 
             tolerancia = timedelta(minutes=20)
             
