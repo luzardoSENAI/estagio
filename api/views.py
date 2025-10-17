@@ -1,3 +1,4 @@
+
 from django.shortcuts import render, redirect
 from django.http import JsonResponse, HttpResponse
 from usuarios.models import Usuario, Registro
@@ -9,6 +10,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q, F, Value, CharField, Case, When
 import json
 from django.views.decorators.csrf import csrf_exempt
+import locale
 
 def api(request):
     return JsonResponse({'RESPONSE':200})
@@ -18,19 +20,16 @@ def registrar_frequencia(request,turma):
     if request.method == "POST":
         try:
             body = json.loads(request.body)
-            d_uuid = body.get('d_uuid')
-            
-            data = body.get('data')
-
-            uuid = body.get("uuid")
-            hora = body.get("hora")
-            data = body.get("data")
+            d_uuid = body.get('dispositivo_id')
+            registros = body.get('registros')
         except json.JSONDecodeError:
             return JsonResponse({"error": "JSON inválido"}, status=400)
+        
         turma_get = Turma.objects.get(nome=turma)
-        estagiario = Usuario.objects.filter(uuid=uuid).first()
-
         dispositivo = Dispositvo.objects.get(uuid = d_uuid)
+
+        if turma_get.instituicao != dispositivo.instituicao:
+            return(JsonResponse({'status':'Turma/Dispositivo Diferentes'}))
 
         instituicao = turma_get.instituicao
 
@@ -48,43 +47,50 @@ def registrar_frequencia(request,turma):
         hora_entrada = turma.hora_entrada  
         hora_saida = turma.hora_saida
 
-        tolerancia = timedelta(minutes=20)
-        # agora = time(18, 10, 00)
-        
-        agora = datetime.now().time().replace(microsecond=0)
-        entrada_dt = datetime.combine(hoje, hora_entrada)
-        saida_dt = datetime.combine(hoje, hora_saida)
-        data_dt = date.today()
-        agora_dt = datetime.combine(data_dt, agora)
-        limite_entrada = entrada_dt + tolerancia
-        limite_saida = saida_dt - tolerancia
-        print(f' AGORA:{agora}, DATA ENTRADA:{entrada_dt} , SAIDA:{saida_dt}')
-        if not estagiario:
-            return JsonResponse({"error": "Estagiário não encontrado"}, status=404)
-        if dia_semana in turma.dias_semana:
-            if agora_dt <= limite_entrada:
-                status = "presente"
-                justificado = True
-            elif limite_entrada < agora_dt < limite_saida:
-                status = "atrasado"
-                justificado = False
-            else:
-                status = "falta"
-                return JsonResponse({"mensagem": f"{status}"})
-            Registro.objects.create(
-                estagiario=estagiario,
-                hora_registro=agora,
-                status=status,
-                instituicao=instituicao,
-                justificado=justificado,
-                turma = turma
-            )
-            dispositivo.ultimo_registro = timezone.now()
-            dispositivo.save()
-        else:
-            status = "Hoje não é dia de aula"
+            tolerancia = timedelta(minutes=20)
+            
+            # agora = time(18, 10, 00)
+            agora = datetime.strptime(r['hora'], '%H:%M:%S').time()
 
-        return JsonResponse({"mensagem": f"{status}"})
+            entrada_dt = datetime.combine(hoje, hora_entrada)
+            saida_dt = datetime.combine(hoje, hora_saida)
+            data_dt = datetime.strptime(r['data'], '%Y-%m-%d').date()
+            agora_dt = datetime.combine(data_dt, agora)
+            limite_entrada = entrada_dt + tolerancia
+            limite_saida = saida_dt - tolerancia
+            print(f' AGORA:{agora}, DATA ENTRADA:{entrada_dt} , SAIDA:{saida_dt}')
+            if not estagiario:
+                return JsonResponse({"error": "Estagiário não encontrado"}, status=404)
+            if dia_semana in turma.dias_semana:
+                if agora_dt <= limite_entrada:
+                    status = "presente"
+                    justificado = True
+                elif limite_entrada < agora_dt < limite_saida:
+                    status = "atrasado"
+                    justificado = False
+                else:
+                    status = "falta"
+                    return JsonResponse({"mensagem": f"{status}"})
+                Registro.objects.create(
+                    estagiario=estagiario,
+                    hora_registro=agora,
+                    status=status,
+                    data=data_dt,
+                    instituicao=instituicao,
+                    justificado=justificado,
+                    turma = turma
+                )
+                dispositivo.ultimo_registro = timezone.now()
+                dispositivo.save()
+            else:
+                status = "Hoje não é dia de aula"
+            response.append({
+                'aluno':r['uuid'],
+                'status':status,
+                'hora':r['hora'],
+                'data':r['data']
+            })
+        return(JsonResponse(response, safe=False))
     
     return JsonResponse({"error": "Método não permitido"}, status=405)
 
@@ -109,63 +115,235 @@ def frequencia_gestor(request):
         return redirect('inicio')
     
     elif usuario.cargo == 'gestor':
-        estagiarios_qs = Usuario.objects.filter(
-        Q(turma_empresa__gestor=usuario) | Q(turma_escola__gestor=usuario)
-        ).annotate(
-            turma_nome=Case(
-                When(turma_empresa__gestor=usuario, then=F('turma_empresa__nome')),
-                When(turma_escola__gestor=usuario, then=F('turma_escola__nome')),
-                default=Value('Sem turma'),
-                output_field=CharField()
+        # GET =================================
+        if request.method=='GET':
+            
+            estagiarios_qs = Usuario.objects.filter(
+            Q(turma_empresa__gestor=usuario) | Q(turma_escola__gestor=usuario)
+            ).annotate(
+                turma_nome=Case(
+                    When(turma_empresa__gestor=usuario, then=F('turma_empresa__nome')),
+                    When(turma_escola__gestor=usuario, then=F('turma_escola__nome')),
+                    default=Value('Sem turma'),
+                    output_field=CharField()
+                )
             )
-        )
-        turmas_qs = Turma.objects.filter(gestor=usuario)
+            turmas_qs = Turma.objects.filter(gestor=usuario)
 
-        registros = []
-        turmas=[]
-        estagiarios = []
-        turmas_aluno = []
-
-        for t in turmas_qs:
-            turmas.append({
-                'id':t.id,
-                'nome':t.nome,
-            })
-        estagiarios = []
-        registros_estagiario = []
-        for e in estagiarios_qs:
+            registros = []
+            turmas=[]
+            estagiarios = []
             turmas_aluno = []
 
-            if e.turma_empresa and e.turma_empresa.gestor == usuario:
-                turmas_aluno.append(e.turma_empresa.id)
+            for t in turmas_qs:
+                turmas.append({
+                    'id':t.id,
+                    'nome':t.nome,
+                })
+            estagiarios = []
+            registros_estagiario = []
+            for e in estagiarios_qs:
+                turmas_aluno = []
 
-            if e.turma_escola and e.turma_escola.gestor == usuario:
-                turmas_aluno.append(e.turma_escola.id)
+                if e.turma_empresa and e.turma_empresa.gestor == usuario:
+                    turmas_aluno.append(e.turma_empresa.id)
 
-            turmas_aluno = list(set(turmas_aluno))  # remove duplicatas
+                if e.turma_escola and e.turma_escola.gestor == usuario:
+                    turmas_aluno.append(e.turma_escola.id)
 
-            # Buscar registros do estagiário nas turmas dele
-            registros_estagiario = Registro.objects.filter(
-                estagiario=e,
-                turma_id__in=turmas_aluno
-            ).values('id', 'turma_id', 'data', 'hora_registro', 'status')  # ou os campos que quiser
+                turmas_aluno = list(set(turmas_aluno))  # remove duplicatas
 
-            estagiarios.append({
-                'nome': e.nome,
-                'email':e.email,
-                'telefone':e.telefone,
-                'uuid':e.uuid,
-                'matricula':e.matricula,
-                'foto':e.image.url,
-                'registros': list(registros_estagiario),
-                'turmas_estagiario': turmas_aluno,
-            })
+                estagiarios.append({
+                    'nome': e.nome,
+                    'email':e.email,
+                    'telefone':e.telefone,
+                    'uuid':e.uuid,
+                    'matricula':e.matricula,
+                    'foto':e.image.url,
+                    'turmas_estagiario': turmas_aluno,
+                })
 
-        data = {
-            'estagiarios':list(estagiarios),
-            'turmas': list(turmas),
-        }
-    return JsonResponse(data)
+            data = {
+                'estagiarios':list(estagiarios),
+                'turmas': list(turmas),
+            }
+            return JsonResponse(data)
+
+        elif request.method == 'POST':
+            hoje = date.today()
+            try:
+                body = json.loads(request.body)
+                estagiario_uuid = body.get('estagiario')
+                turma_id = body.get('turma')
+                status_filtro = body.get('status', 'all')
+                dias_filtro = body.get('dias', 'all')
+
+                if not turma_id:
+                    return JsonResponse({"error": "O ID da turma é obrigatório."}, status=400)
+
+                dias_semana_map = ['segunda', 'terça', 'quarta', 'quinta', 'sexta', 'sabado', 'domingo']
+
+                # --- CASO 1: RESUMO DE TODOS OS ESTAGIÁRIOS DA TURMA ---
+                if estagiario_uuid == 'all':
+                    try:
+                        turma = Turma.objects.get(id=turma_id)
+                        dia_semana_hoje = dias_semana_map[hoje.weekday()]
+                        
+                        # Retorna vazio se não for um dia de aula programado para a turma
+
+                        # Busca usuários que são estagiários E que pertencem à turma
+                        # seja no campo turma_escola OU no campo turma_empresa.
+                        estagiarios_da_turma = Usuario.objects.filter(
+                            Q(turma_escola_id=turma_id) | Q(turma_empresa_id=turma_id),
+                            cargo='estagiario'
+                        )
+
+                        resultados = []
+                        for estagiario in estagiarios_da_turma:
+                            # Pega o último registro do estagiário NAQUELA TURMA no dia de HOJE
+                            ultimo_registro_hoje = Registro.objects.filter(
+                                estagiario=estagiario,
+                                turma_id=turma_id,
+                                data=hoje
+                            ).order_by('-hora_registro').first()
+
+                            status_hoje = "falta"
+                            hora_registro_hoje = None
+                            ultimo_registro_data = None
+                            ultimo_registro_hora = None
+
+                            if ultimo_registro_hoje:
+                                status_hoje = ultimo_registro_hoje.status
+                                hora_registro_hoje = ultimo_registro_hoje.hora_registro.strftime('%H:%M:%S')
+                            else:
+                                # Se faltou hoje, busca o último registro geral na turma
+                                ultimo_registro_geral = Registro.objects.filter(
+                                    estagiario=estagiario,
+                                    turma_id=turma_id
+                                ).order_by('-data', '-hora_registro').first()
+
+                                if ultimo_registro_geral:
+                                    ultimo_registro_data = ultimo_registro_geral.data.strftime('%Y-%m-%d')
+                                    ultimo_registro_hora = ultimo_registro_geral.hora_registro.strftime('%H:%M:%S')
+                            
+                            # Aplica o filtro de status
+                            if status_filtro == 'all' or status_hoje.lower() == status_filtro.lower():
+                                resultados.append({
+                                    'uuid': estagiario.uuid,
+                                    'foto': estagiario.foto_perfil, # Usando a property
+                                    'nome': estagiario.nome,
+                                    'data': hoje.strftime('%Y-%m-%d'),
+                                    'status': status_hoje,
+                                    'hora_registro': hora_registro_hoje,
+                                    'ultimo_registro_data': ultimo_registro_data,
+                                    'ultimo_registro_hora': ultimo_registro_hora,
+                                })
+
+                        return JsonResponse({'dados': resultados}, safe=False)
+
+                    except Turma.DoesNotExist:
+                        return JsonResponse({"error": "Turma não encontrada"}, status=404)
+
+                # --- CASO 2: HISTÓRICO DE UM ESTAGIÁRIO ESPECÍFICO ---
+                else:
+                    try:
+                        estagiario = Usuario.objects.get(uuid=estagiario_uuid, cargo='estagiario')
+                        turma = Turma.objects.get(id=turma_id)
+
+                        # Validação extra: verifica se o estagiário realmente pertence a essa turma
+                        if estagiario.turma_escola_id != int(turma_id) and estagiario.turma_empresa_id != int(turma_id):
+                            return JsonResponse({"error": "O estagiário não pertence à turma especificada."}, status=403)
+
+                        # --- LÓGICA AJUSTADA ---
+                        # Define o número de DIAS DE AULA a serem buscados
+                        quantidade_dias_de_aula = 15 if dias_filtro == 'all' else int(dias_filtro)
+                        
+                        # Se a turma não tiver dias de aula definidos, retorna uma lista vazia para evitar loops.
+                        if not turma.dias_semana:
+                            return JsonResponse({'dados': []}, safe=False)
+
+                        datas_para_verificar = []
+                        dias_calendario_verificados = 0
+                        data_atual = hoje
+
+                        # Loop continua buscando para trás no calendário até encontrar a quantidade
+                        # desejada de dias de aula.
+                        # Adicionado um limite de 365 dias corridos para evitar loops infinitos.
+                        while len(datas_para_verificar) < quantidade_dias_de_aula and dias_calendario_verificados < 365:
+                            dia_da_semana = dias_semana_map[data_atual.weekday()]
+                            
+                            # Se o dia da semana atual for um dia de aula programado, adiciona à lista.
+                            if dia_da_semana in turma.dias_semana:
+                                datas_para_verificar.append(data_atual)
+                            
+                            # Prepara para verificar o dia anterior na próxima iteração.
+                            data_atual -= timedelta(days=1)
+                            dias_calendario_verificados += 1
+                        
+                        # --- FIM DA LÓGICA AJUSTADA ---
+
+                        resultados = []
+                        # O restante do código permanece o mesmo, iterando sobre as datas de aula que foram coletadas.
+                        for data_verificar in datas_para_verificar:
+                            registro_do_dia = Registro.objects.filter(
+                                estagiario=estagiario,
+                                turma_id=turma_id,
+                                data=data_verificar
+                            ).order_by('-hora_registro').first()
+
+                            status_dia = "falta" if not registro_do_dia else registro_do_dia.status
+                            hora_registro_dia = None if not registro_do_dia else registro_do_dia.hora_registro.strftime('%H:%M:%S')
+                            try:
+                                # Para Linux, macOS e a maioria dos ambientes de produção
+                                    locale.setlocale(locale.LC_TIME, 'pt_BR.UTF-8')
+                            except locale.Error:
+                                try:
+                                    # Para Windows
+                                    locale.setlocale(locale.LC_TIME, 'Portuguese_Brazil.1252')
+                                except locale.Error:
+                                        # Fallback para o locale padrão do sistema se nenhum funcionar
+                                    locale.setlocale(locale.LC_TIME, '')
+
+                            # Aplica o filtro de status
+                            if status_filtro == 'all' or status_dia.lower() == status_filtro.lower():
+                                dias_semana_map = ['segunda', 'terça', 'quarta', 'quinta', 'sexta', 'sabado', 'domingo']
+                                dia_da_semana = dias_semana_map[data_verificar.weekday()]
+                                resultados.append({
+                                    'uuid': estagiario.uuid,
+                                    'foto': estagiario.foto_perfil,
+                                    'nome': estagiario.nome,
+                                    'data': data_verificar.strftime('%Y-%m-%d'),
+                                    'status': status_dia,
+                                    'hora_registro': hora_registro_dia,
+                                    'ultimo_registro_data': None,
+                                    'ultimo_registro_hora': None,
+                                    'dia':dia_da_semana.capitalize()
+                                })
+                        
+                        # A lista `resultados` está em ordem decrescente (hoje -> passado).
+                        # Invertemos para que fique em ordem cronológica para o frontend.
+                        return JsonResponse({
+                            'dados': resultados
+                            }, safe=False, json_dumps_params={'ensure_ascii': False})
+
+                    except Usuario.DoesNotExist:
+                        return JsonResponse({"error": "Estagiário não encontrado"}, status=404)
+                    except Turma.DoesNotExist:
+                        return JsonResponse({"error": "Turma não encontrada"}, status=404)
+                    except Exception as e:
+                        return JsonResponse({"error": f"Ocorreu um erro interno: {str(e)}"}, status=500)
+
+                    except Usuario.DoesNotExist:
+                        return JsonResponse({"error": "Estagiário não encontrado"}, status=404)
+                    except Turma.DoesNotExist:
+                        return JsonResponse({"error": "Turma não encontrada"}, status=404)
+
+            except json.JSONDecodeError:
+                return JsonResponse({"error": "JSON inválido"}, status=400)
+            except Exception as e:
+                return JsonResponse({"error": f"Ocorreu um erro interno: {str(e)}"}, status=500)
+
+    return JsonResponse({'teste':'teste'})
 
 @csrf_exempt
 def demandas_gestor(request):
@@ -180,14 +358,14 @@ def dispositivos(request):
     # Busca todos os dispositivos dessas instituições
     dispositivos_qs = Dispositvo.objects.filter(instituicao__in=instituicao_qs)
     dispositivos = [
-    {
-        "id": d.uuid,
-        "instituicao": d.instituicao.nome,
-        'status':d.online,
-        'utlimo_ping':str(d.ultimo_ping),
-        'utlimo_registro':str(d.ultimo_registro)
-    }
-    for d in dispositivos_qs
+        {
+            "id": d.uuid,
+            "instituicao": d.instituicao.nome,
+            'status':d.online,
+            'utlimo_ping':str(d.ultimo_ping),
+            'utlimo_registro':str(d.ultimo_registro)
+        }
+        for d in dispositivos_qs
     ]
     return JsonResponse(dispositivos, safe=False)
 
@@ -202,187 +380,268 @@ from reportlab.platypus import Image
 import os
 import json
 
-def gerar_pdf(dados_json, gestor_nome=""):
+def gerar_pdf(contexto):
     """
-    Gera um relatório de frequência em PDF a partir de um dicionário de dados.
+    Gera um relatório de frequência em PDF a partir de um dicionário de contexto.
     O PDF é criado em memória e seus dados binários são retornados.
     """
-    # Dados principais do JSON
-    
+    # --- Funções Auxiliares ---
     def formatar_data_brasileira(data_iso):
-        return datetime.strptime(data_iso, "%Y-%m-%d").strftime("%d/%m/%Y")
-    """Converte data do formato ISO (2025-10-06) para o formato brasileiro (06/10/2025)."""
-    unico = dados_json.get("unico", False)
-    data = dados_json.get("data")
-    hora = dados_json.get("hora")
-    turma = dados_json.get("turma")
-    dados = dados_json.get("dados", [])
+        if not data_iso: return "--"
+        try: return datetime.strptime(data_iso, "%Y-%m-%d").strftime("%d/%m/%Y")
+        except (ValueError, TypeError): return data_iso
 
-    # Cria um buffer na memória para receber os dados do PDF
+    # --- Extração de Dados do Contexto ---
+    tipo_relatorio = contexto.get("tipo_relatorio", "geral")
+    turma_nome = contexto.get("turma_nome", "N/A")
+    gestor_nome = contexto.get("gestor_nome", "N/A")
+    data_emissao = contexto.get("data_emissao")
+    hora_emissao = contexto.get("hora_emissao")
+    dados = contexto.get("dados", [])
+
+    # --- Configuração do Documento ---
     buffer = io.BytesIO()
+    nome_arquivo = f"Relatorio_{turma_nome.replace(' ', '_')}_{tipo_relatorio.capitalize()}.pdf"
     
-    # Gera um nome de arquivo dinâmico
-    nome_arquivo = f"Relatorio_{turma.replace(' ', '_')}_{'Individual' if unico else 'Geral'}.pdf"
-
-    # Definindo margens
-    leftMargin = rightMargin = 20
-    topMargin = bottomMargin = 20
-
-    # Configura o documento PDF para usar o buffer
-    pdf = SimpleDocTemplate(buffer, pagesize=A4,
-                            rightMargin=rightMargin, leftMargin=leftMargin,
-                            topMargin=topMargin, bottomMargin=bottomMargin)
+    pdf = SimpleDocTemplate(buffer, pagesize=A4, rightMargin=inch/2, leftMargin=inch/2, topMargin=inch/2, bottomMargin=inch/2)
     estilos = getSampleStyleSheet()
     elementos = []
 
-    # --- Construção do PDF ---
-    
-    # Imagem no topo
-    caminho_imagem = "./media/pdf_bg.png"
-    imagem = Image(caminho_imagem, width=150, height=60)
-    imagem.hAlign = "CENTER"
-    elementos.append(imagem)
+    # --- 1. Título e Informações ---
+    is_individual = tipo_relatorio == "individual"
+    titulo_texto = "Relatório Individual de Frequência" if is_individual else "Relatório Geral de Frequência"
+    elementos.append(Paragraph(titulo_texto, estilos["Title"]))
     elementos.append(Spacer(1, 12))
 
-    # Título do relatório
-    titulo = Paragraph(
-        "<b>Relatório Individual de Frequência</b>" if unico else "<b>Relatório Geral de Frequência</b>",
-        estilos["Title"]
-    )
-    elementos.append(titulo)
-    elementos.append(Spacer(1, 12))
-
-    # 2. Cabeçalho de Informações
-    if unico:
-        nome_estagiario = dados_json.get("nome", "Não Identificado")
-        info_texto = f"""
-            <b>Turma:</b> {turma}<br/>
-            <b>Estagiário:</b> {nome_estagiario}<br/>
-            <b>Gestor:</b> {gestor_nome}<br/>
-            <b>Data do Relatório:</b> {formatar_data_brasileira(data)} — <b>Hora:</b> {hora}
-        """
-    else:
-        info_texto = f"""
-            <b>Turma:</b> {turma}<br/>
-            <b>Gestor:</b> {gestor_nome}<br/>
-            <b>Data do Relatório:</b> {formatar_data_brasileira(data)} — <b>Hora:</b> {hora}
-        """
-    info = Paragraph(info_texto, estilos["Normal"])
-    elementos.append(info)
+    info_texto = f"<b>Turma:</b> {turma_nome}<br/>"
+    if is_individual:
+        nome_estagiario = contexto.get("nome_estagiario", "Não Identificado")
+        info_texto += f"<b>Estagiário:</b> {nome_estagiario}<br/>"
+    info_texto += f"<b>Gestor Responsável:</b> {gestor_nome}<br/><b>Data de Emissão:</b> {formatar_data_brasileira(data_emissao)} às {hora_emissao}"
+    elementos.append(Paragraph(info_texto, estilos["Normal"]))
     elementos.append(Spacer(1, 20))
 
-    # 3. Tabela de Dados
+    # --- 2. Tabela de Dados ---
     if not dados:
-        elementos.append(Paragraph("Nenhum dado de frequência foi encontrado para este relatório.", estilos["Normal"]))
+        elementos.append(Paragraph("Nenhum dado encontrado para os filtros selecionados.", estilos["Normal"]))
     else:
-        if unico:
-            tabela_dados = [["Data", "Status", "Hora"]]
-            for grupo in dados:
-                for reg in grupo:
-                    status = reg.get("status", "-").capitalize()
-                    hora_reg = reg.get("hora_registro") or "Sem registro."
-                    hora_reg = (
-                        reg.get("hora_registro") or "--"
-                        if reg.get("hora_registro") or "--"
-                        else "Sem último registro."
-                    )
-                    tabela_dados.append([formatar_data_brasileira(reg.get("data", "-")), status, hora_reg])
-            tabela = Table(tabela_dados, colWidths=[120, 120, 120])
-        else:
-            tabela_dados = [["Estagiário", f"Status de Hoje ({formatar_data_brasileira(data)})", "Último Registro"]]
-            for grupo in dados:
-                for reg in grupo:
-                    status = reg.get("status", "-").capitalize()
-                    ultimo_reg = (
-                        f'{formatar_data_brasileira(reg.get("data"))} - {reg.get("hora_registro")}'
-                        if reg.get("data") and reg.get("hora_registro")
-                        else f'{formatar_data_brasileira(reg.get("ultimo_registro_data"))} - {reg.get("ultimo_registro_hora")}'
-                        if reg.get("ultimo_registro_data") and reg.get("ultimo_registro_hora")
-                        else "Sem último registro."
-                    )
-                    tabela_dados.append([reg.get("nome", "-"), status, ultimo_reg])
-            tabela = Table(tabela_dados, colWidths=[150, 120, 150])
-
-        # Estilo da Tabela
-        
-        # CALCULAR LARGURA TOTAL
-        largura_pagina, altura_pagina = A4
-        largura_util = largura_pagina - leftMargin - rightMargin
-        col_count = len(tabela_dados[0])
-        colWidths = [largura_util / col_count] * col_count
+        if is_individual:
+            tabela_dados = [["Data da Aula", "Status", "Hora do Registro"]]
+            for reg in dados:
+                tabela_dados.append([
+                    formatar_data_brasileira(reg.get("data")),
+                    reg.get("status", "-").capitalize(),
+                    reg.get("hora_registro") or "--"
+                ])
+            colWidths = [150, 150, 150]
+        else: # Relatório Geral
+            data_formatada = formatar_data_brasileira(data_emissao)
+            tabela_dados = [["Estagiário", f"Status em {data_formatada}", "Observação"]]
+            for reg in dados:
+                observacao = ""
+                if reg.get("status") in ['presente', 'atrasado']:
+                    observacao = f'Registrado hoje às {reg.get("hora_registro")}'
+                elif reg.get("ultimo_registro_data"):
+                    ultimo_data = formatar_data_brasileira(reg.get("ultimo_registro_data"))
+                    observacao = f'Último registro em {ultimo_data} às {reg.get("ultimo_registro_hora")}'
+                else:
+                    observacao = "Nenhum registro anterior encontrado"
+                
+                tabela_dados.append([
+                    reg.get("nome", "-"),
+                    reg.get("status", "-").capitalize(),
+                    observacao
+                ])
+            colWidths = [200, 120, 220]
 
         tabela = Table(tabela_dados, colWidths=colWidths)
-
-        # Estilo da tabela
         tabela.setStyle(TableStyle([
-            ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#026E6B")),  # Cabeçalho
-            ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
-            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('FONTSIZE', (0, 0), (-1, 0), 11),
-            ('ALIGN', (0, 0), (-1, 0), 'CENTER'),
-            ('BOTTOMPADDING', (0, 0), (-1, 0), 10),
-            ('TOPPADDING', (0, 0), (-1, 0), 10),
-
-            ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
-            ('FONTSIZE', (0, 1), (-1, -1), 10),
-            ('TEXTCOLOR', (0, 1), (-1, -1), colors.HexColor("#212529")),
-            ('ALIGN', (0, 1), (-1, -1), 'CENTER'),
-            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-            ('BACKGROUND', (0, 1), (-1, -1), colors.whitesmoke),
-            ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.whitesmoke, colors.HexColor("#f8f9fa")]),
-            ('GRID', (0, 0), (-1, -1), 0.5, colors.HexColor("#dee2e6")),
-            ('TOPPADDING', (0, 1), (-1, -1), 6),
-            ('BOTTOMPADDING', (0, 1), (-1, -1), 6),
+           ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#026E6B")),
+           ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+           ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+           ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+           ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+           ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+           ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.HexColor("#F0F0F0")]),
+           ('GRID', (0, 0), (-1, -1), 1, colors.darkgrey),
         ]))
         elementos.append(tabela)
 
-    elementos.append(Spacer(1, 20))
-
-    # 4. Rodapé
-    rodape = Paragraph(
-        f"<font size=8 color=grey>Gerado automaticamente em {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}</font>",
-        estilos["Normal"]
-    )
-    elementos.append(rodape)
-
-    # Gera o PDF no buffer
+    # --- Geração do PDF ---
     pdf.build(elementos)
-
-    # Retorna o cursor do buffer para o início
     buffer.seek(0)
     
-    # Retorna os dados do PDF e o nome do arquivo
     return buffer, nome_arquivo
 
-@login_required
+@csrf_exempt # Use apenas para teste. Em produção, use a autenticação correta.
 def exportar_pdf(request):
-    if request.method == "POST":
+    if request.method != 'POST':
+        return JsonResponse({"error": "Método não permitido"}, status=405)
+
+    try:
+        req_json = json.loads(request.body)
+        tipo_relatorio = req_json.get("tipo_relatorio")
+        turma_id = req_json.get("turma_id")
+        
+        # O gestor é identificado pela sessão, não enviado pelo frontend
+        gestor = request.user.usuario 
+
+        # --- Busca os dados com base no tipo de relatório ---
+        # (Esta é a mesma lógica das respostas anteriores)
+        
+        dados_para_pdf, turma_obj = buscar_dados_para_relatorio(req_json)
+
+        # --- Monta o contexto para a função de PDF ---
+        contexto_para_pdf = {
+            "tipo_relatorio": tipo_relatorio,
+            "turma_nome": turma_obj.nome,
+            "gestor_nome": gestor.nome,
+            "data_emissao": date.today().strftime("%Y-%m-%d"),
+            "hora_emissao": datetime.now().strftime("%H:%M:%S"),
+            "dados": dados_para_pdf
+        }
+
+        # Se for individual, adiciona o nome do estagiário ao contexto
+        if tipo_relatorio == 'individual':
+            # Supondo que o nome está no primeiro registro dos dados
+            if dados_para_pdf:
+                contexto_para_pdf["nome_estagiario"] = dados_para_pdf[0].get('nome')
+
+        # --- Chama a função para gerar o PDF ---
+        buffer, nome_arquivo = gerar_pdf(contexto_para_pdf)
+
+        # --- Retorna o PDF como uma resposta HTTP ---
+        response = HttpResponse(buffer, content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="{nome_arquivo}"'
+        return response
+
+    except (json.JSONDecodeError, KeyError) as e:
+        return JsonResponse({"error": f"JSON inválido ou chave ausente: {e}"}, status=400)
+    except Exception as e:
+        # Capture outras exceções (ex: Turma.DoesNotExist)
+        return JsonResponse({"error": f"Ocorreu um erro: {e}"}, status=500)
+
+# Você pode mover a lógica de busca para uma função separada para organização
+def buscar_dados_para_relatorio(req_json):
+    tipo = req_json.get('tipo_relatorio')
+    turma_id = req_json.get('turma_id')
+    status_filtro = req_json.get('status_filtro', 'all')
+    
+    if not turma_id:
+        raise ValueError("O ID da turma é obrigatório.")
+
+    # Busca a turma. Se não encontrar, a exceção será capturada pela view principal.
+    turma = Turma.objects.get(id=turma_id)
+    
+    hoje = date.today()
+    dias_semana_map = ['segunda', 'terca', 'quarta', 'quinta', 'sexta', 'sabado', 'domingo']
+    resultados = []
+
+    # --- LÓGICA PARA RELATÓRIO GERAL ---
+    if tipo == 'all':
+        dia_semana_hoje = dias_semana_map[hoje.weekday()]
+
+        # Se hoje não for um dia de aula programado, não há nada a fazer.
+        if dia_semana_hoje not in (turma.dias_semana or []):
+            return [], turma
+        
+        # Busca todos os estagiários da turma
+        estagiarios_da_turma = Usuario.objects.filter(
+            Q(turma_escola_id=turma_id) | Q(turma_empresa_id=turma_id),
+            cargo='estagiario'
+        )
+
+        for estagiario in estagiarios_da_turma:
+            # Pega o último registro do estagiário NAQUELA TURMA no dia de HOJE
+            ultimo_registro_hoje = Registro.objects.filter(
+                estagiario=estagiario,
+                turma=turma,
+                data=hoje
+            ).order_by('-hora_registro').first()
+
+            status_hoje = "falta"
+            hora_registro_hoje = None
+            ultimo_registro_data = None
+            ultimo_registro_hora = None
+
+            if ultimo_registro_hoje:
+                status_hoje = ultimo_registro_hoje.status
+                hora_registro_hoje = ultimo_registro_hoje.hora_registro.strftime('%H:%M:%S')
+            else:
+                # Se faltou hoje, busca o último registro geral na turma
+                ultimo_registro_geral = Registro.objects.filter(
+                    estagiario=estagiario,
+                    turma=turma
+                ).order_by('-data', '-hora_registro').first()
+
+                if ultimo_registro_geral:
+                    ultimo_registro_data = ultimo_registro_geral.data.strftime('%Y-%m-%d')
+                    ultimo_registro_hora = ultimo_registro_geral.hora_registro.strftime('%H:%M:%S')
+            
+            # Adiciona ao resultado apenas se passar pelo filtro de status
+            if status_filtro == 'all' or status_hoje.lower() == status_filtro.lower():
+                resultados.append({
+                    'nome': estagiario.nome,
+                    'status': status_hoje,
+                    'hora_registro': hora_registro_hoje,
+                    'ultimo_registro_data': ultimo_registro_data,
+                    'ultimo_registro_hora': ultimo_registro_hora
+                })
+        
+        return resultados, turma
+
+    # --- LÓGICA PARA RELATÓRIO INDIVIDUAL ---
+    elif tipo == 'individual':
+        estagiario_uuid = req_json.get('estagiario_uuid')
+        dias_filtro = req_json.get('dias_filtro', 'all')
+        
+        if not estagiario_uuid:
+            raise ValueError("O UUID do estagiário é obrigatório para relatórios individuais.")
+
+        estagiario = Usuario.objects.get(uuid=estagiario_uuid, cargo='estagiario')
+
+        # Validação extra para garantir que o estagiário pertence à turma
+        if estagiario.turma_escola_id != int(turma_id) and estagiario.turma_empresa_id != int(turma_id):
+            raise PermissionError("O estagiário solicitado não pertence à turma especificada.")
+
+        # Define o número de DIAS DE AULA a serem buscados
         try:
-            # Pega o corpo da requisição e transforma em dicionário Python
-            dados_json = json.loads(request.body)
-            
-            # Pega o nome do usuário logado para usar como "Gestor"
-            # (Requer que o usuário esteja autenticado)
-            gestor_nome = ""
-            if request.user.is_authenticated:
-                gestor_nome = request.user.usuario.nome
+            quantidade_dias_de_aula = 15 if dias_filtro == 'all' else int(dias_filtro)
+        except (ValueError, TypeError):
+            quantidade_dias_de_aula = 15 # Padrão seguro
 
-            # Chama a função para gerar o PDF em memória
-            pdf_buffer, nome_arquivo = gerar_pdf(dados_json, gestor_nome)
+        datas_para_verificar = []
+        if turma.dias_semana: # Procede apenas se a turma tiver dias de aula definidos
+            dias_calendario_verificados = 0
+            data_atual = hoje
+            # Loop continua buscando para trás até encontrar a quantidade desejada de dias de aula
+            while len(datas_para_verificar) < quantidade_dias_de_aula and dias_calendario_verificados < 365:
+                if dias_semana_map[data_atual.weekday()] in turma.dias_semana:
+                    datas_para_verificar.append(data_atual)
+                data_atual -= timedelta(days=1)
+                dias_calendario_verificados += 1
+        
+        for data_verificar in datas_para_verificar:
+            registro_do_dia = Registro.objects.filter(
+                estagiario=estagiario,
+                turma=turma,
+                data=data_verificar
+            ).order_by('-hora_registro').first()
 
-            # Cria a resposta HTTP com o conteúdo do PDF
-            response = HttpResponse(pdf_buffer, content_type='application/pdf')
+            status_dia = "falta" if not registro_do_dia else registro_do_dia.status
             
-            # Define o cabeçalho para forçar o download com o nome de arquivo correto
-            response['Content-Disposition'] = f'attachment; filename="{nome_arquivo}"'
-            
-            return response
+            # Adiciona ao resultado apenas se passar pelo filtro de status
+            if status_filtro == 'all' or status_dia.lower() == status_filtro.lower():
+                resultados.append({
+                    'nome': estagiario.nome, # Adicionado para consistência
+                    'data': data_verificar.strftime('%Y-%m-%d'),
+                    'status': status_dia,
+                    'hora_registro': registro_do_dia.hora_registro.strftime('%H:%M:%S') if registro_do_dia else None,
+                })
+        
+        # Inverte a lista para que as datas fiquem em ordem cronológica (passado -> presente)
+        resultados.reverse()
+        return resultados, turma
 
-        except json.JSONDecodeError:
-            return JsonResponse({"error": "Corpo da requisição contém JSON inválido."}, status=400)
-        except Exception as e:
-            # Captura outros possíveis erros durante a geração do PDF
-            return JsonResponse({"error": f"Ocorreu um erro ao gerar o PDF: {str(e)}"}, status=500)
-            
-    # Se o método não for POST, retorna um erro
-    return JsonResponse({"error": "Método não permitido. Utilize POST."}, status=405)
+    # Retorno padrão caso o tipo de relatório não seja reconhecido
+    return [], turma

@@ -32,7 +32,7 @@ LOGIN_URL = '/login/'
 
 STATIC_URL = '/static/'
 
-
+DEFAULT_CHARSET = 'utf-8'
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 

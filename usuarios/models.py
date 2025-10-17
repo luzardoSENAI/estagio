@@ -71,7 +71,7 @@ def create_profile(sender, instance, created, **kwargs):
 class Registro(models.Model):
     estagiario = models.ForeignKey(Usuario, on_delete=models.CASCADE,limit_choices_to={'cargo': 'estagiario'})
     instituicao = models.ForeignKey('instituicoes.Instituicao', on_delete=models.CASCADE)
-    data = models.DateField(auto_now_add=True)
+    data = models.DateField()
     hora_registro = models.TimeField()
     turma = models.ForeignKey(
         'instituicoes.Turma',
